@@ -18,7 +18,7 @@ public class WeTalk extends Application {
 
     public static final int NUM_PAGE = 6;// 总共有多少页
     public static int NUM = 20;// 每页20个表情,还有最后一个删除button
-    private Map<String, Integer> mFaceMap = new LinkedHashMap<String, Integer>();
+    private Map<String, Integer> mFaceMap = new LinkedHashMap<>();
     private static WeTalk mApplication;
 
     public synchronized static WeTalk getInstance() {

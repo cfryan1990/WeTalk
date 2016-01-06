@@ -15,6 +15,7 @@ import org.jivesoftware.smack.roster.RosterEntry;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
 import org.jivesoftware.smackx.iqregister.AccountManager;
+import org.jivesoftware.smackx.ping.android.ServerPingWithAlarmManager;
 import org.jivesoftware.smackx.vcardtemp.VCardManager;
 import org.jivesoftware.smackx.vcardtemp.packet.VCard;
 
@@ -126,8 +127,8 @@ public class MainActivity extends Activity {
 			}
 		}).start();
 
+		connection.isAuthenticated();
 		ChatManager cm = ChatManager.getInstanceFor(connection);
-
 
 		send.setOnClickListener(new OnClickListener() {
 
