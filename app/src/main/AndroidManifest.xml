@@ -34,13 +34,6 @@
             </intent-filter>
         </activity>
 
-        <activity
-            android:name=".activity.WeTalkMainActivity"
-            android:label="@string/app_name"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustPan" >
-        </activity>
-
     </application>
 
 </manifest>

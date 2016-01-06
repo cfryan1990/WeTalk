@@ -1,6 +1,6 @@
 package cfryan.wetalk.util;
 
-import com.cfryan.wanglai4android.R;
+import cfryan.wetalk.R;
 
 import android.app.Activity;
 import android.app.Dialog;

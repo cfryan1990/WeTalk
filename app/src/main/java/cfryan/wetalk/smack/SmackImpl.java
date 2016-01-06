@@ -1,9 +1,12 @@
 package cfryan.wetalk.smack;
 
+import org.jivesoftware.smack.AbstractXMPPConnection;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.SmackInitialization;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.provider.ProviderManager;
+import org.jivesoftware.smack.tcp.XMPPTCPConnection;
+import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
 import org.jivesoftware.smackx.carbons.packet.Carbon;
 import org.jivesoftware.smackx.carbons.provider.CarbonManagerProvider;
 import org.jivesoftware.smackx.delay.provider.DelayInformationProvider;
@@ -29,6 +32,12 @@ public class SmackImpl implements Smack {
     public static final String XMPP_IDENTITY_TYPE = "android";// 客户端类型
 
     private static final int PACKET_TIMEOUT = 30000;// 超时时间30s
+
+    public AbstractXMPPConnection connection;
+    static
+    {
+        registerSmackProviders();
+    }
 
     // 做一些基本XMPP协议配置
     static void registerSmackProviders()
@@ -62,6 +71,16 @@ public class SmackImpl implements Smack {
     }
     public SmackImpl() {
 
+
+
+        XMPPTCPConnectionConfiguration.Builder configBuilder = XMPPTCPConnectionConfiguration.builder();
+        configBuilder.setHost("192.168.1.105");
+        configBuilder.setPort(5222);
+        configBuilder.setServiceName("chenfengdemacbook-pro.local");
+        configBuilder.setSecurityMode(XMPPTCPConnectionConfiguration.SecurityMode.disabled);
+        configBuilder.setDebuggerEnabled(true);
+
+        connection = new XMPPTCPConnection(configBuilder.build());
 
     }
 

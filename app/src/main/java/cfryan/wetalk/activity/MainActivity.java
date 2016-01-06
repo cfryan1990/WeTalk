@@ -50,14 +50,15 @@ public class MainActivity extends Activity {
 
 
 		XMPPTCPConnectionConfiguration.Builder configBuilder = XMPPTCPConnectionConfiguration.builder();
-
 		configBuilder.setHost("10.1.17.5");
 		configBuilder.setPort(5222);
 		configBuilder.setServiceName("desktop-cfryan1990");
 		configBuilder.setSecurityMode(XMPPTCPConnectionConfiguration.SecurityMode.disabled);
+		configBuilder.setDebuggerEnabled(true);
+
 //		configBuilder.setKeystorePath("/system/etc/security/cacerts.bks");
 //		configBuilder.setKeystoreType("bks");
-		configBuilder.setDebuggerEnabled(true);
+
 
 //		configBuilder.setHostnameVerifier(new HostnameVerifier() {
 //			@Override

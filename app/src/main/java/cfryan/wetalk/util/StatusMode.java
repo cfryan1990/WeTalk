@@ -1,6 +1,6 @@
 package cfryan.wetalk.util;
 
-import com.cfryan.wanglai4android.R;
+import cfryan.wetalk.R;
 
 public enum StatusMode {
 	offline(R.string.status_offline, -1), // 离线状态，没有图标

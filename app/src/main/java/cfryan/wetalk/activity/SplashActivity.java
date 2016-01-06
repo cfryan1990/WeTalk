@@ -46,7 +46,7 @@ public class SplashActivity extends Activity {
 
         @Override
         public void run() {
-            startActivity(new Intent(SplashActivity.this, WeTalkMainActivty.class));
+//            startActivity(new Intent(SplashActivity.this, WeTalkMainActivty.class));
             finish();
         }
     };
