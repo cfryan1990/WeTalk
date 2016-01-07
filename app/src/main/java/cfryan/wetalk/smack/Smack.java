@@ -1,6 +1,9 @@
 package cfryan.wetalk.smack;
 
 import org.jivesoftware.smack.SmackException;
+import org.jivesoftware.smack.XMPPException;
+
+import java.io.IOException;
 
 /**
  * Created by cf on 2016/1/6.
@@ -13,11 +16,9 @@ public interface Smack {
      * @param account
      * @param password
      * @return 登陆结果
-     * @throws SmackException.NotConnectedException
-     * @throws SmackException.AlreadyLoggedInException
+
      */
-    public boolean login(String account, String password) throws SmackException.NotConnectedException,
-            SmackException.AlreadyLoggedInException;
+    public boolean login(String account, String password) throws SmackException, IOException, XMPPException;
 
     /**
      * 注销登陆
@@ -31,11 +32,8 @@ public interface Smack {
     /**
      * 检查登录和认证状态
      * @return
-     * @throws SmackException.NotConnectedException
-     * @throws SmackException.NotLoggedInException
      */
-    public boolean isAuthenticated()
-            throws SmackException.NotConnectedException, SmackException.NotLoggedInException;
+    public boolean isAuthenticated();
 
     /**
      * 添加好友

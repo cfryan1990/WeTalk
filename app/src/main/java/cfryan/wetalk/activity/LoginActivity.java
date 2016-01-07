@@ -6,20 +6,15 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
-import android.text.Editable;
 import android.text.TextUtils;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
@@ -27,113 +22,82 @@ import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smackx.vcardtemp.VCardManager;
 import org.jivesoftware.smackx.vcardtemp.packet.VCard;
 
+import java.lang.ref.WeakReference;
+
 import cfryan.wetalk.R;
+import cfryan.wetalk.service.CoreService;
+import cfryan.wetalk.service.IConnectionStatusCallback;
 import cfryan.wetalk.smack.SmackImpl;
+import cfryan.wetalk.util.ChangeLog;
 import cfryan.wetalk.util.DialogUtil;
+import cfryan.wetalk.util.L;
+import cfryan.wetalk.util.T;
+
 //import com.cfryan.wanglai4android.util.L;
 //import com.cfryan.wanglai4android.util.PreferenceConstants;
 //import com.cfryan.wanglai4android.util.PreferenceUtils;
-import cfryan.wetalk.util.L;
-import cfryan.wetalk.util.T;
 //import com.cfryan.wanglai4android.util.XMPPHelper;
 
-import java.lang.ref.WeakReference;
-
-public class LoginActivity extends Activity implements
-//        IConnectionStatusCallback,TextWatcher,
-    OnClickListener {
+public class LoginActivity extends Activity implements IConnectionStatusCallback
+//        ,TextWatcher,OnClickListener
+{
     public static final String LOGIN_ACTION = "com.cfryan.action.LOGIN";
     private static final int LOGIN_OUT_TIME = 0;
     private Button mLoginBtn;
     private Button mRegisterBtn;
     private EditText mAccountEt;
     private EditText mPasswordEt;
-//    private XXService mXxService;
+    private CoreService mService;
+
+    ServiceConnection mServiceConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            mService = ((CoreService.XXBinder) service).getService();
+            mService.registerConnectionStatusCallback(LoginActivity.this);
+            // 开始连接xmpp服务器
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            mService.unRegisterConnectionStatusCallback();
+            mService = null;
+        }
+
+    };
     private Dialog mLoginDialog;
     private ConnectionOutTimeProcess mLoginOutTimeProcess;
     private String mAccount;
     private String mPassword;
     private myHandler mHandler;
 
-    private SmackImpl mSmack;
-
-    static class myHandler extends Handler {
-
-        WeakReference<Context> mContext;
-        WeakReference<ConnectionOutTimeProcess> mLoginOutTimeProcess;
-        WeakReference<Dialog> mLoginDialog;
-
-        myHandler(Context context, ConnectionOutTimeProcess connectionOutTimeProcess, Dialog dialog) {
-            mContext = new WeakReference<>(context);
-            mLoginOutTimeProcess = new WeakReference<>(connectionOutTimeProcess);
-            mLoginDialog = new WeakReference<>(dialog);
-        }
-
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            switch (msg.what) {
-                case LOGIN_OUT_TIME:
-                    if (mLoginOutTimeProcess != null
-                            && mLoginOutTimeProcess.get().running)
-                        mLoginOutTimeProcess.get().stop();
-                    if (mLoginDialog != null && mLoginDialog.get().isShowing())
-                        mLoginDialog.get().dismiss();
-                    T.showShort(mContext.get(), R.string.timeout_try_again);
-                    break;
-
-                default:
-                    break;
-            }
-        }
-    }
-
-
-//    ServiceConnection mServiceConnection = new ServiceConnection() {
-//
-//        @Override
-//        public void onServiceConnected(ComponentName name, IBinder service) {
-//            mXxService = ((XXService.XXBinder) service).getService();
-//            mXxService.registerConnectionStatusCallback(LoginActivity.this);
-//            // 开始连接xmpp服务器
-//        }
-//
-//        @Override
-//        public void onServiceDisconnected(ComponentName name) {
-//            mXxService.unRegisterConnectionStatusCallback();
-//            mXxService = null;
-//        }
-//
-//    };
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        startService(new Intent(LoginActivity.this, XXService.class));
-//        bindXMPPService();
+        startService(new Intent(LoginActivity.this, CoreService.class));
+        bindXMPPService();
         setContentView(R.layout.activity_loginpage);
         initView();
-        mSmack = new SmackImpl();
     }
 
-//    @Override
-//    protected void onResume() {
-//        super.onResume();
-//        ChangeLog cl = new ChangeLog(this);
-//        if (cl.firstRun()) {
-//            cl.getFullLogDialog().show();
-//        }
-//    }
-//
-//    @Override
-//    protected void onDestroy() {
-//        super.onDestroy();
-//        unbindXMPPService();
-//        if (mLoginOutTimeProcess != null) {
-//            mLoginOutTimeProcess.stop();
-//            mLoginOutTimeProcess = null;
-//        }
-//    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        ChangeLog cl = new ChangeLog(this);
+        if (cl.firstRun()) {
+            cl.getFullLogDialog().show();
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unbindXMPPService();
+        if (mLoginOutTimeProcess != null) {
+            mLoginOutTimeProcess.stop();
+            mLoginOutTimeProcess = null;
+        }
+    }
 
     private void initView() {
         mAccountEt = (EditText) findViewById(R.id.et_account_name);
@@ -154,7 +118,7 @@ public class LoginActivity extends Activity implements
         mLoginOutTimeProcess = new ConnectionOutTimeProcess();
         mHandler = new myHandler(this, mLoginOutTimeProcess, mLoginDialog);
 
-        mRegisterBtn.setOnClickListener(this);
+//        mRegisterBtn.setOnClickListener(this);
     }
 
     public void onLoginClick(View v) {
@@ -173,52 +137,59 @@ public class LoginActivity extends Activity implements
 //            mLoginOutTimeProcess.start();
 //        if (mLoginDialog != null && !mLoginDialog.isShowing())
 //            mLoginDialog.show();
-//        if (mXxService != null) {
-//            mXxService.Login(mAccount, mPassword);
-//        }
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    Thread.sleep(3000);
-                    mSmack.connection.connect();
-                    L.i("flag", "服务器连接成功");
+        if (mService != null) {
+            L.i("login","mSerive");
+            mService.Login(mAccount, mPassword);
+        }
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                try {
+//                    Thread.sleep(3000);
+//                    mSmack.connection.connect();
+//                    L.i("flag", "服务器连接成功");
+//
+//                    mSmack.connection.login(mAccount, mPassword);
+//
+//                    L.i("flag", "登录成功");
+//
+//                    try {
+//                        VCard vCard = VCardManager.getInstanceFor(mSmack.connection).loadVCard();
+//                        vCard.setNickName("陈峰");
+//                        VCardManager.getInstanceFor(mSmack.connection).saveVCard(vCard);
+//                    } catch (SmackException.NoResponseException e) {
+//                        e.printStackTrace();
+//                    } catch (XMPPException.XMPPErrorException e) {
+//                        e.printStackTrace();
+//                    } catch (SmackException.NotConnectedException e) {
+//                        e.printStackTrace();
+//                    }
+//
+//                    try {
+//                        VCard vCard = VCardManager.getInstanceFor(mSmack.connection).loadVCard();
+//                        String name = vCard.getNickName();
+//                        Log.i("name", name);
+//                    } catch (SmackException.NoResponseException e) {
+//                        e.printStackTrace();
+//                    } catch (XMPPException.XMPPErrorException e) {
+//                        e.printStackTrace();
+//                    } catch (SmackException.NotConnectedException e) {
+//                        e.printStackTrace();
+//                    }
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        }).start();
+    }
 
-                    mSmack.connection.login(mAccount, mPassword);
-                    Presence presence = new Presence(Presence.Type.available);
-                    presence.setStatus("I am online");
-
-                    mSmack.connection.sendStanza(presence);
-                    L.i("flag","登录成功");
-
-                    try {
-                        VCard vCard = VCardManager.getInstanceFor(mSmack.connection).loadVCard();
-                        vCard.setNickName("陈峰");
-                        VCardManager.getInstanceFor(mSmack.connection).saveVCard(vCard);
-                    } catch (SmackException.NoResponseException e) {
-                        e.printStackTrace();
-                    } catch (XMPPException.XMPPErrorException e) {
-                        e.printStackTrace();
-                    } catch (SmackException.NotConnectedException e) {
-                        e.printStackTrace();
-                    }
-
-                    try {
-                        VCard vCard = VCardManager.getInstanceFor(mSmack.connection).loadVCard();
-                        String name = vCard.getNickName();
-                        Log.i("name", name);
-                    } catch (SmackException.NoResponseException e) {
-                        e.printStackTrace();
-                    } catch (XMPPException.XMPPErrorException e) {
-                        e.printStackTrace();
-                    } catch (SmackException.NotConnectedException e) {
-                        e.printStackTrace();
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }).start();
+    private void unbindXMPPService() {
+        try {
+            unbindService(mServiceConnection);
+            L.i(LoginActivity.class, "[SERVICE] Unbind");
+        } catch (IllegalArgumentException e) {
+            L.e(LoginActivity.class, "Service wasn't bound!");
+        }
     }
 
 //    private String splitAndSaveServer(String account) {
@@ -233,23 +204,32 @@ public class LoginActivity extends Activity implements
 //        PreferenceUtils.setPrefString(this, PreferenceConstants.Server, server);
 //        return userName;
 //    }
-//
-//    private void unbindXMPPService() {
-//        try {
-//            unbindService(mServiceConnection);
-//            L.i(LoginActivity.class, "[SERVICE] Unbind");
-//        } catch (IllegalArgumentException e) {
-//            L.e(LoginActivity.class, "Service wasn't bound!");
-//        }
-//    }
-//
-//    private void bindXMPPService() {
-//        L.i(LoginActivity.class, "[SERVICE] Unbind");
-//        Intent mServiceIntent = new Intent(this, XXService.class);
-//        mServiceIntent.setAction(LOGIN_ACTION);
-//        bindService(mServiceIntent, mServiceConnection,
-//                Context.BIND_AUTO_CREATE + Context.BIND_DEBUG_UNBIND);
-//    }
+
+    private void bindXMPPService() {
+        L.i(LoginActivity.class, "[SERVICE] Unbind");
+        Intent mServiceIntent = new Intent(this, CoreService.class);
+        mServiceIntent.setAction(LOGIN_ACTION);
+        bindService(mServiceIntent, mServiceConnection,
+                Context.BIND_AUTO_CREATE + Context.BIND_DEBUG_UNBIND);
+    }
+
+    @Override
+    public void connectionStatusChanged(int connectedState, String reason) {
+        // TODO Auto-generated method stub
+        if (mLoginDialog != null && mLoginDialog.isShowing())
+            mLoginDialog.dismiss();
+        if (mLoginOutTimeProcess != null && mLoginOutTimeProcess.running) {
+            mLoginOutTimeProcess.stop();
+            mLoginOutTimeProcess = null;
+        }
+        if (connectedState == mService.CONNECTED) {
+//            save2Preferences();
+//            startActivity(new Intent(this, WanglaiMainActivty.class));
+            finish();
+        } else if (connectedState == mService.DISCONNECTED)
+            T.showLong(LoginActivity.this, getString(R.string.request_failed)
+                    + reason);
+    }
 //
 //    @Override
 //    public void beforeTextChanged(CharSequence s, int start, int count,
@@ -306,6 +286,37 @@ public class LoginActivity extends Activity implements
 //                    PreferenceConstants.AVAILABLE);
 //    }
 
+    static class myHandler extends Handler {
+
+        WeakReference<Context> mContext;
+        WeakReference<ConnectionOutTimeProcess> mLoginOutTimeProcess;
+        WeakReference<Dialog> mLoginDialog;
+
+        myHandler(Context context, ConnectionOutTimeProcess connectionOutTimeProcess, Dialog dialog) {
+            mContext = new WeakReference<>(context);
+            mLoginOutTimeProcess = new WeakReference<>(connectionOutTimeProcess);
+            mLoginDialog = new WeakReference<>(dialog);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what) {
+                case LOGIN_OUT_TIME:
+                    if (mLoginOutTimeProcess != null
+                            && mLoginOutTimeProcess.get().running)
+                        mLoginOutTimeProcess.get().stop();
+                    if (mLoginDialog != null && mLoginDialog.get().isShowing())
+                        mLoginDialog.get().dismiss();
+                    T.showShort(mContext.get(), R.string.timeout_try_again);
+                    break;
+
+                default:
+                    break;
+            }
+        }
+    }
+
     /**
      * 登录超时处理线程
      */
@@ -354,32 +365,14 @@ public class LoginActivity extends Activity implements
     }
 
 //    @Override
-//    public void connectionStatusChanged(int connectedState, String reason) {
-//        // TODO Auto-generated method stub
-//        if (mLoginDialog != null && mLoginDialog.isShowing())
-//            mLoginDialog.dismiss();
-//        if (mLoginOutTimeProcess != null && mLoginOutTimeProcess.running) {
-//            mLoginOutTimeProcess.stop();
-//            mLoginOutTimeProcess = null;
+//    public void onClick(View v) {
+//        switch (v.getId()) {
+//            case R.id.btn_register:
+////			Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
+////			startActivity(intent);
+//                break;
+//
 //        }
-//        if (connectedState == XXService.CONNECTED) {
-//            save2Preferences();
-//            startActivity(new Intent(this, WanglaiMainActivty.class));
-//            finish();
-//        } else if (connectedState == XXService.DISCONNECTED)
-//            T.showLong(LoginActivity.this, getString(R.string.request_failed)
-//                    + reason);
-//    }
 
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.btn_register:
-//			Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
-//			startActivity(intent);
-                break;
-
-        }
-
-    }
 }
+

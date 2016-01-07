@@ -18,7 +18,8 @@ public class PreferenceConstants {
 	public final static String REPORT_CRASH = "reportcrash";
 	public final static String ACCOUNT = "account";
 	public final static String PASSWORD = "password";
-	public final static String Server = "server";
+	public final static String Server_IP = "server_ip";
+	public final static String Server_Name = "server_name";
 	public final static String AUTO_START = "auto_start";
 	public final static String SHOW_MY_HEAD= "show_my_head";
 	
