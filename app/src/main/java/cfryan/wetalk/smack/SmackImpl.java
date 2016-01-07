@@ -107,24 +107,24 @@ public class SmackImpl implements Smack {
 
 
     public SmackImpl(CoreService service) {
-//        String ServerHost = PreferenceUtils.getPrefString(service, PreferenceConstants.Server_IP,
-//                PreferenceConstants.DEFAULT_SERVER_IP);// 默认的服务器IP
-//        String ServerName = PreferenceUtils.getPrefString(service, PreferenceConstants.Server_Name,
-//                PreferenceConstants.DEFAULT_SERVER_NAME);//默认的服务器名
-//        int port = PreferenceUtils.getPrefInt(service, PreferenceConstants.PORT,
-//                PreferenceConstants.DEFAULT_PORT_INT);// 端口号，也是留给用户手动设置的
+        String ServerHost = PreferenceUtils.getPrefString(service, PreferenceConstants.Server_IP,
+                PreferenceConstants.MacBook_SERVER_IP);// 默认的服务器IP
+        String ServerName = PreferenceUtils.getPrefString(service, PreferenceConstants.Server_Name,
+                PreferenceConstants.MacBook_SERVER_NAME);//默认的服务器名
+        int port = PreferenceUtils.getPrefInt(service, PreferenceConstants.PORT,
+                PreferenceConstants.DEFAULT_PORT_INT);// 端口号，也是留给用户手动设置的
 
-//        boolean SmackDebug = PreferenceUtils.getPrefBoolean(service, PreferenceConstants.SMACKDEBUG,
-//                false);// 是否需要smack的debug功能
+        boolean SmackDebug = PreferenceUtils.getPrefBoolean(service, PreferenceConstants.SMACKDEBUG,
+                false);// 是否需要smack的debug功能
 
         XMPPTCPConnectionConfiguration.Builder configBuilder = XMPPTCPConnectionConfiguration.builder();
-        configBuilder.setHost(PreferenceConstants.DEFAULT_SERVER_IP);
-        configBuilder.setPort(5222);
-        configBuilder.setServiceName( PreferenceConstants.DEFAULT_SERVER_NAME);
+        configBuilder.setHost(ServerHost);
+        configBuilder.setPort(port);
+        configBuilder.setServiceName(ServerName);
         configBuilder.setSecurityMode(XMPPTCPConnectionConfiguration.SecurityMode.disabled);
         configBuilder.setCompressionEnabled(false);
         configBuilder.setSendPresence(true);
-        configBuilder.setDebuggerEnabled(true);
+        configBuilder.setDebuggerEnabled(SmackDebug);
         this.mXMPPConnection = new XMPPTCPConnection(configBuilder.build());
 
         ReconnectionManager reconnectionManager = ReconnectionManager.getInstanceFor(mXMPPConnection);
@@ -178,6 +178,7 @@ public class SmackImpl implements Smack {
                 } catch (SmackException.NotConnectedException e) {
                     e.printStackTrace();
                 }
+                L.i(SmackImpl.class,"Login success");
             }
 
             @Override
@@ -206,11 +207,11 @@ public class SmackImpl implements Smack {
             }
         });
 
-//        if (!mXMPPConnection.isAuthenticated())
-//        {
-//            String ressource = PreferenceUtils.getPrefString(mService, PreferenceConstants.RESSOURCE, XMPP_IDENTITY_NAME);
-            mXMPPConnection.login(account, password);
-//        }
+        if (!mXMPPConnection.isAuthenticated())
+        {
+            String ressource = PreferenceUtils.getPrefString(mService, PreferenceConstants.RESSOURCE, XMPP_IDENTITY_NAME);
+            mXMPPConnection.login(account, password, ressource);
+        }
 
         return mXMPPConnection.isAuthenticated();
     }

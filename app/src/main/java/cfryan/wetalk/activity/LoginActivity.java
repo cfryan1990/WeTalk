@@ -31,6 +31,8 @@ import cfryan.wetalk.smack.SmackImpl;
 import cfryan.wetalk.util.ChangeLog;
 import cfryan.wetalk.util.DialogUtil;
 import cfryan.wetalk.util.L;
+import cfryan.wetalk.util.PreferenceConstants;
+import cfryan.wetalk.util.PreferenceUtils;
 import cfryan.wetalk.util.T;
 
 //import com.cfryan.wanglai4android.util.L;
@@ -133,10 +135,10 @@ public class LoginActivity extends Activity implements IConnectionStatusCallback
             T.showShort(this, R.string.password_input_prompt);
             return;
         }
-//        if (mLoginOutTimeProcess != null && !mLoginOutTimeProcess.running)
-//            mLoginOutTimeProcess.start();
-//        if (mLoginDialog != null && !mLoginDialog.isShowing())
-//            mLoginDialog.show();
+        if (mLoginOutTimeProcess != null && !mLoginOutTimeProcess.running)
+            mLoginOutTimeProcess.start();
+        if (mLoginDialog != null && !mLoginDialog.isShowing())
+            mLoginDialog.show();
         if (mService != null) {
             L.i("login","mSerive");
             mService.Login(mAccount, mPassword);
@@ -225,7 +227,7 @@ public class LoginActivity extends Activity implements IConnectionStatusCallback
         if (connectedState == mService.CONNECTED) {
 //            save2Preferences();
 //            startActivity(new Intent(this, WanglaiMainActivty.class));
-            finish();
+//            finish();
         } else if (connectedState == mService.DISCONNECTED)
             T.showLong(LoginActivity.this, getString(R.string.request_failed)
                     + reason);
@@ -259,32 +261,32 @@ public class LoginActivity extends Activity implements IConnectionStatusCallback
 //
 //    }
 //
-//    private void save2Preferences() {
-//        boolean isAutoSavePassword = true;//mAutoSavePasswordCK.isChecked();
-//        boolean isUseTls = false;//mUseTlsCK.isChecked();
-//        boolean isSilenceLogin = false;//mSilenceLoginCK.isChecked();
-//        boolean isHideLogin = false;//mHideLoginCK.isChecked();
-//        PreferenceUtils.setPrefString(this, PreferenceConstants.ACCOUNT,
-//                mAccount);// 帐号是一直保存的
-//        if (isAutoSavePassword)
-//            PreferenceUtils.setPrefString(this, PreferenceConstants.PASSWORD,
-//                    mPassword);
-//        else
-//            PreferenceUtils.setPrefString(this, PreferenceConstants.PASSWORD,
-//                    "");
-//
-//        PreferenceUtils.setPrefBoolean(this, PreferenceConstants.REQUIRE_TLS,
-//                isUseTls);
-//        PreferenceUtils.setPrefBoolean(this, PreferenceConstants.SCLIENTNOTIFY,
-//                isSilenceLogin);
-//        if (isHideLogin)
-//            PreferenceUtils.setPrefString(this,
-//                    PreferenceConstants.STATUS_MODE, PreferenceConstants.XA);
-//        else
-//            PreferenceUtils.setPrefString(this,
-//                    PreferenceConstants.STATUS_MODE,
-//                    PreferenceConstants.AVAILABLE);
-//    }
+    private void save2Preferences() {
+        boolean isAutoSavePassword = true;//mAutoSavePasswordCK.isChecked();
+        boolean isUseTls = false;//mUseTlsCK.isChecked();
+        boolean isSilenceLogin = false;//mSilenceLoginCK.isChecked();
+        boolean isHideLogin = false;//mHideLoginCK.isChecked();
+        PreferenceUtils.setPrefString(this, PreferenceConstants.ACCOUNT,
+                mAccount);// 帐号是一直保存的
+        if (isAutoSavePassword)
+            PreferenceUtils.setPrefString(this, PreferenceConstants.PASSWORD,
+                    mPassword);
+        else
+            PreferenceUtils.setPrefString(this, PreferenceConstants.PASSWORD,
+                    "");
+
+        PreferenceUtils.setPrefBoolean(this, PreferenceConstants.REQUIRE_TLS,
+                isUseTls);
+        PreferenceUtils.setPrefBoolean(this, PreferenceConstants.SCLIENTNOTIFY,
+                isSilenceLogin);
+        if (isHideLogin)
+            PreferenceUtils.setPrefString(this,
+                    PreferenceConstants.STATUS_MODE, PreferenceConstants.XA);
+        else
+            PreferenceUtils.setPrefString(this,
+                    PreferenceConstants.STATUS_MODE,
+                    PreferenceConstants.AVAILABLE);
+    }
 
     static class myHandler extends Handler {
 

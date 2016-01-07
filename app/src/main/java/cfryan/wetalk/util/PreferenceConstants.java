@@ -12,6 +12,8 @@ public class PreferenceConstants {
 	 */
 	public static final String DEFAULT_SERVER_IP = "10.1.17.5";
 	public static final String DEFAULT_SERVER_NAME = "desktop-cfryan1990";
+	public static final String MacBook_SERVER_IP = "192.168.1.105";
+	public static final String MacBook_SERVER_NAME = "chenfengdemacbook-pro.local";
 	public static final String REMOTE_HOST = "http://10.1.17.5:8080";//http上传下载服务器
 
 	public final static String ISNEEDLOG = "isneedlog";
