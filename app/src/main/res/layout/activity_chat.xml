@@ -14,7 +14,7 @@
         android:layout_weight="1.0"
         android:visibility="visible" >
 
-        <com.cfryan.wanglai4android.ui.xlistview.MsgListView
+        <com.cfryan.beyondchat.ui.xlistview.MsgListView
             android:id="@+id/msg_listView"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
@@ -174,7 +174,7 @@
                 android:flipInterval="30"
                 android:persistentDrawingCache="animation" />
 
-            <com.cfryan.wanglai4android.ui.view.CirclePageIndicator
+            <com.cfryan.beyondchat.ui.view.CirclePageIndicator
                 xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:id="@+id/indicator"
                 android:layout_width="fill_parent"

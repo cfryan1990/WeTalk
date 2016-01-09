@@ -1,0 +1,255 @@
+package com.cfryan.beyondchat.activity;
+
+import com.cfryan.beyondchat.R;
+//import com.cfryan.wanglai4android.application.XXBroadcastReceiver;
+import com.cfryan.beyondchat.fragment.ContactFragment;
+//import com.cfryan.wanglai4android.fragment.RecentChatFragment;
+
+import com.cfryan.beyondchat.service.CoreService;
+import com.cfryan.beyondchat.service.IConnectionStatusCallback;
+//import com.cfryan.wanglai4android.util.ActivityManager;
+import com.cfryan.beyondchat.util.L;
+import com.cfryan.beyondchat.util.PreferenceConstants;
+import com.cfryan.beyondchat.util.PreferenceUtils;
+import com.cfryan.beyondchat.util.T;
+
+import android.app.Activity;
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
+import android.os.Bundle;
+import android.os.IBinder;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+import android.widget.TextView;
+
+public class MainTabActivty extends Activity implements IConnectionStatusCallback {
+
+    private String linkStatus = "";
+    private int mCurrentIndex;
+    private CoreService mService;
+
+    private FragmentManager fragmentManager;
+    private FragmentTransaction transaction;
+    private RadioGroup radioGroup;
+    private TextView mTitle;
+    private ImageView mLeftBtn;
+    private ProgressBar mTitleProgressBar;
+
+    ServiceConnection mServiceConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            mService = ((CoreService.XXBinder) service).getService();
+            mService.registerConnectionStatusCallback(MainTabActivty.this);
+            // 开始连接xmpp服务器
+            if (!mService.isAuthenticated()) {
+                String usr = PreferenceUtils.getPrefString(MainTabActivty.this,
+                        PreferenceConstants.ACCOUNT, "");
+                String password = PreferenceUtils.getPrefString(
+                        MainTabActivty.this, PreferenceConstants.PASSWORD, "");
+                mService.Login(usr, password);
+                //       mService.setStatusFromConfig();
+
+            } else {
+                /*
+                 * mTitleNameView.setText(XMPPHelper
+				 * .splitJidAndServer(PreferenceUtils.getPrefString(
+				 * MainActivity.this, PreferenceConstants.ACCOUNT, "")));
+				 * setStatusImage(true);
+				 */
+//                mService.setStatusFromConfig();
+            }
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            mService.unRegisterConnectionStatusCallback();
+            mService = null;
+        }
+
+    };
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        startService(new Intent(MainTabActivty.this, CoreService.class));
+        setContentView(R.layout.activity_main_tab);
+
+        mTitle = (TextView) findViewById(R.id.ui_titlebar_txt);
+        mLeftBtn = (ImageView) findViewById(R.id.ui_titlebar_back_btn);
+        mLeftBtn.setVisibility(View.GONE);
+
+        mTitleProgressBar = (ProgressBar) findViewById(R.id.ivTitleProgress);
+
+        fragmentManager = getFragmentManager();
+        radioGroup = (RadioGroup) findViewById(R.id.rg_tab);
+        ((RadioButton) radioGroup.findViewById(R.id.RB_0)).setChecked(true);
+
+        transaction = fragmentManager.beginTransaction();
+
+        Fragment fragment = new ContactFragment();
+        transaction.replace(R.id.content, fragment);
+        transaction.commit();
+
+        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                // 此处chenckID为radiogroup中radioButton的R.id
+                changeFragmentByIndex(checkedId);
+            }
+        });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        bindXMPPService();
+//        getContentResolver().registerContentObserver(
+//                RosterProvider.CONTENT_URI, true, mRosterObserver);
+//        setStatusImage(isConnected());
+//        // if (!isConnected())
+//        // mTitleNameView.setText(R.string.login_prompt_no);
+//        mRosterAdapter.requery();
+//        XXBroadcastReceiver.mListeners.add(this);
+//        if (NetUtil.getNetworkState(this) == NetUtil.NETWORN_NONE)
+//            mNetErrorView.setVisibility(View.VISIBLE);
+//        else
+//            mNetErrorView.setVisibility(View.GONE);
+//        ChangeLog cl = new ChangeLog(this);
+//        if (cl != null && cl.firstRun()) {
+//            cl.getFullLogDialog().show();
+//        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        //    getContentResolver().unregisterContentObserver(mRosterObserver);
+        unbindXMPPService();
+//        XXBroadcastReceiver.mListeners.remove(this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+    }
+
+    private void unbindXMPPService() {
+        try {
+            unbindService(mServiceConnection);
+            L.i(LoginActivity.class, "[SERVICE] Unbind");
+        } catch (IllegalArgumentException e) {
+            L.e(LoginActivity.class, "Service wasn't bound!");
+        }
+    }
+
+    private void bindXMPPService() {
+        L.i(LoginActivity.class, "[SERVICE] Unbind");
+        bindService(new Intent(MainTabActivty.this, CoreService.class),
+                mServiceConnection, Context.BIND_AUTO_CREATE
+                        + Context.BIND_DEBUG_UNBIND);
+    }
+
+    private void changeFragmentByIndex(int index) {
+
+        switch (index) {
+            case R.id.RB_0:
+                transaction = fragmentManager.beginTransaction();
+                Fragment fragment1 = new ContactFragment();
+                transaction.replace(R.id.content, fragment1);
+                transaction.commit();
+                mTitle.setText(linkStatus.endsWith("") ? getString(R.string.main_tab_message) : linkStatus);
+                mCurrentIndex = 0;
+                break;
+
+            case R.id.RB_1:
+                transaction = fragmentManager.beginTransaction();
+                Fragment fragment2 = new ContactFragment();
+                transaction.replace(R.id.content, fragment2);
+                transaction.commit();
+                mTitle.setText(getString(R.string.main_tab_contact));
+                mCurrentIndex = 1;
+                break;
+            case R.id.RB_2:
+                transaction = fragmentManager.beginTransaction();
+                Fragment fragment3 = new ContactFragment();
+                transaction.replace(R.id.content, fragment3);
+                transaction.commit();
+                mTitle.setText(linkStatus.endsWith("") ? getString(R.string.main_tab_bulletin) : linkStatus);
+                mCurrentIndex = 2;
+                break;
+            case R.id.RB_3:
+                transaction = fragmentManager.beginTransaction();
+                Fragment fragment4 = new ContactFragment();
+                transaction.replace(R.id.content, fragment4);
+                transaction.commit();
+                mTitle.setText(getString(R.string.main_tab_setting));
+                mCurrentIndex = 3;
+                break;
+        }
+    }
+
+
+    @Override
+    public void connectionStatusChanged(int connectedState, String reason) {
+        switch (connectedState) {
+            case CoreService.CONNECTED:
+                linkStatus = "";
+                // mTitleNameView.setText(XMPPHelper.splitJidAndServer(PreferenceUtils
+                // .getPrefString(MainActivity.this,
+                // PreferenceConstants.ACCOUNT, "")));
+                mTitleProgressBar.setVisibility(View.GONE);
+                // setStatusImage(true);
+                if (mCurrentIndex == 0)
+                {
+                    mTitle.setText(getString(R.string.main_tab_message));
+                }else if (mCurrentIndex == 2)
+                {
+                    mTitle.setText(getString(R.string.main_tab_bulletin));
+                }
+                break;
+            case CoreService.CONNECTING:
+                linkStatus = getString(R.string.login_prompt_msg);
+                mTitleProgressBar.setVisibility(View.VISIBLE);
+                if (mCurrentIndex == 0 || mCurrentIndex == 2) {
+                    mTitle.setText(linkStatus);
+                }
+                break;
+            case CoreService.DISCONNECTED:
+                linkStatus = getString(R.string.login_prompt_no);
+                mTitleProgressBar.setVisibility(View.GONE);
+                if (mCurrentIndex == 0 || mCurrentIndex == 2) {
+                    mTitle.setText(linkStatus);
+                }
+                T.showLong(this, reason);
+                break;
+
+            default:
+                break;
+        }
+
+    }
+
+
+//	@Override
+//	public XXService getService() {
+//		// TODO Auto-generated method stub
+//		return this.mService;
+//	}
+
+
+	public MainTabActivty getMainActivity() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+}

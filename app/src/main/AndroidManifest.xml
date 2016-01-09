@@ -1,7 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="cfryan.wetalk">
+    package="com.cfryan.beyondchat">
 
     <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.CAMERA"/>
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <!-- 读取联系人权限 -->
@@ -14,7 +15,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".activity.SplashActivity"
+            android:name="com.cfryan.beyondchat.activity.SplashActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -24,7 +25,7 @@
         </activity>
 
         <activity
-            android:name=".activity.LoginActivity"
+            android:name="com.cfryan.beyondchat.activity.LoginActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateAlwaysHidden|adjustPan" >
             <intent-filter>
@@ -34,7 +35,30 @@
             </intent-filter>
         </activity>
 
-        <service android:name="cfryan.wetalk.service.CoreService" />
+        <activity
+            android:name=".activity.MainTabActivty"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustPan" >
+        </activity>
+
+        <service android:name="com.cfryan.beyondchat.service.CoreService" />
+
+        <provider
+            android:name="com.cfryan.beyondchat.db.ChatProvider"
+            android:authorities="com.hdu.cfryan.provider.Chats" />
+        <provider
+            android:name="com.cfryan.beyondchat.db.RosterProvider"
+            android:authorities="com.hdu.cfryan.provider.Roster" />
+        <provider
+            android:name="com.cfryan.beyondchat.db.AvatarProvider"
+            android:authorities="com.hdu.cfryan.provider.Avatar" />
+        <provider
+            android:name="com.cfryan.beyondchat.db.AddPhonesProvider"
+            android:authorities="com.hdu.cfryan.provider.AddPhones" />
+        <provider
+            android:name="com.cfryan.beyondchat.db.NewFriendsProvider"
+            android:authorities="com.hdu.cfryan.provider.NewFriends" />
 
     </application>
 

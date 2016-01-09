@@ -1,11 +1,11 @@
 <resources>
-    <string name="app_name">WeTalk</string>
-    <string name="app_display_name">往来</string>
-    <string name="app_version">V1.0.1</string>
+    <string name="app_name">BeyondChat</string>
+    <string name="app_display_name">越信</string>
+    <string name="app_version">V0.0.1</string>
     <string name="app_copy_right">Designed by cfryan\nCompliled by Android Studio</string>
     <string name="action_settings">Settings</string>
 
-    <string name="run_bg_ticker">往来正在后台运行</string>
+    <string name="run_bg_ticker">越信正在后台运行</string>
     <string name="timeout_try_again">网络连接超时，请重试</string>
 
 
@@ -55,8 +55,6 @@
     <string name="aio_ime_action_label">完成</string>
     <string name="aio_press_speak_label">按住说话</string>
     <string name="title_record_btn">按下说话</string>
-
-
 
 
     <!-- 上拉下拉 -->

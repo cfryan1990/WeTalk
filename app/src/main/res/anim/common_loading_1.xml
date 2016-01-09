@@ -1,41 +1,90 @@
 <?xml version="1.0" encoding="utf-8"?>
-<animation-list xmlns:android="http://schemas.android.com/apk/res/android" >
+<animation-list xmlns:android="http://schemas.android.com/apk/res/android"
+        android:variablePadding = "true">
 
-    <item
-        android:drawable="@mipmap/common_loading4_0"
-        android:duration="100"/>
-    <item
-        android:drawable="@mipmap/common_loading4_1"
-        android:duration="100"/>
-    <item
-        android:drawable="@mipmap/common_loading4_2"
-        android:duration="100"/>
-    <item
-        android:drawable="@mipmap/common_loading4_3"
-        android:duration="100"/>
-    <item
-        android:drawable="@mipmap/common_loading4_4"
-        android:duration="100"/>
-    <item
-        android:drawable="@mipmap/common_loading4_5"
-        android:duration="100"/>
-    <item
-        android:drawable="@mipmap/common_loading4_6"
-        android:duration="100"/>
-    <item
-        android:drawable="@mipmap/common_loading4_7"
-        android:duration="100"/>
-    <item
-        android:drawable="@mipmap/common_loading4_8"
-        android:duration="100"/>
-    <item
-        android:drawable="@mipmap/common_loading4_9"
-        android:duration="100"/>
-    <item
-        android:drawable="@mipmap/common_loading4_10"
-        android:duration="100"/>
-    <item
-        android:drawable="@mipmap/common_loading4_11"
-        android:duration="100"/>
+    <item android:duration="100">
+        <clip xmlns:android="http://schemas.android.com/apk/res/android"
+            android:clipOrientation="horizontal"
+            android:gravity="left"
+            android:drawable="@mipmap/common_loading4_0">
+        </clip>
+    </item>
+    <item android:duration="100">
+        <clip xmlns:android="http://schemas.android.com/apk/res/android"
+            android:clipOrientation="horizontal"
+            android:gravity="left"
+            android:drawable="@mipmap/common_loading4_1">
+        </clip>
+    </item>
+    <item android:duration="100">
+        <clip xmlns:android="http://schemas.android.com/apk/res/android"
+            android:clipOrientation="horizontal"
+            android:gravity="left"
+            android:drawable="@mipmap/common_loading4_2">
+        </clip>
+    </item>
+    <item android:duration="100">
+        <clip xmlns:android="http://schemas.android.com/apk/res/android"
+            android:clipOrientation="horizontal"
+            android:gravity="left"
+            android:drawable="@mipmap/common_loading4_3">
+        </clip>
+    </item>
+    <item android:duration="100">
+        <clip xmlns:android="http://schemas.android.com/apk/res/android"
+            android:clipOrientation="horizontal"
+            android:gravity="left"
+            android:drawable="@mipmap/common_loading4_4">
+        </clip>
+    </item>
+    <item android:duration="100">
+        <clip xmlns:android="http://schemas.android.com/apk/res/android"
+            android:clipOrientation="horizontal"
+            android:gravity="left"
+            android:drawable="@mipmap/common_loading4_5">
+        </clip>
+    </item>
+    <item android:duration="100">
+        <clip xmlns:android="http://schemas.android.com/apk/res/android"
+            android:clipOrientation="horizontal"
+            android:gravity="left"
+            android:drawable="@mipmap/common_loading4_6">
+        </clip>
+    </item>
+    <item android:duration="100">
+        <clip xmlns:android="http://schemas.android.com/apk/res/android"
+            android:clipOrientation="horizontal"
+            android:gravity="left"
+            android:drawable="@mipmap/common_loading4_7">
+        </clip>
+    </item>
+    <item android:duration="100">
+        <clip xmlns:android="http://schemas.android.com/apk/res/android"
+            android:clipOrientation="horizontal"
+            android:gravity="left"
+            android:drawable="@mipmap/common_loading4_8">
+        </clip>
+    </item>
+    <item android:duration="100">
+        <clip xmlns:android="http://schemas.android.com/apk/res/android"
+            android:clipOrientation="horizontal"
+            android:gravity="left"
+            android:drawable="@mipmap/common_loading4_9">
+        </clip>
+    </item>
+    <item android:duration="100">
+        <clip xmlns:android="http://schemas.android.com/apk/res/android"
+            android:clipOrientation="horizontal"
+            android:gravity="left"
+            android:drawable="@mipmap/common_loading4_10">
+        </clip>
+    </item>
+    <item android:duration="100">
+        <clip xmlns:android="http://schemas.android.com/apk/res/android"
+            android:clipOrientation="horizontal"
+            android:gravity="left"
+            android:drawable="@mipmap/common_loading4_11">
+        </clip>
+    </item>
 
 </animation-list>

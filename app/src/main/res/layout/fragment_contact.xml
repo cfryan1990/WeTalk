@@ -5,7 +5,7 @@
     android:background="@color/grey_main"
     android:orientation="vertical">
 
-    <com.cfryan.wanglai4android.ui.view.ClearEditText
+    <com.cfryan.beyondchat.ui.view.ClearEditText
         android:id="@+id/filter_edit"
         android:layout_width="match_parent"
         android:layout_height="35dp"
@@ -15,7 +15,7 @@
         android:hint="  请输入关键字"
         android:padding="8dp"
         android:singleLine="true"
-        android:textSize="15.0dip" />
+        android:textSize="15.0dp" />
 
     <FrameLayout
         android:id="@+id/fragment_layout"
@@ -24,7 +24,7 @@
         android:layout_below="@+id/filter_edit">
 
 
-        <com.cfryan.wanglai4android.ui.view.PinnedSectionListView
+        <com.cfryan.beyondchat.ui.view.PinnedSectionListView
             android:id="@+id/lv_contact_listview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
