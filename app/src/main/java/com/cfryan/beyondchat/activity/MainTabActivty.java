@@ -153,7 +153,7 @@ public class MainTabActivty extends Activity implements IConnectionStatusCallbac
     }
 
     private void bindXMPPService() {
-        L.i(LoginActivity.class, "[SERVICE] Unbind");
+        L.i(LoginActivity.class, "[SERVICE] bind");
         bindService(new Intent(MainTabActivty.this, CoreService.class),
                 mServiceConnection, Context.BIND_AUTO_CREATE
                         + Context.BIND_DEBUG_UNBIND);
@@ -184,7 +184,7 @@ public class MainTabActivty extends Activity implements IConnectionStatusCallbac
                 Fragment fragment3 = new ContactFragment();
                 transaction.replace(R.id.content, fragment3);
                 transaction.commit();
-                mTitle.setText(linkStatus.endsWith("") ? getString(R.string.main_tab_bulletin) : linkStatus);
+                mTitle.setText(getString(R.string.main_tab_bulletin));
                 mCurrentIndex = 2;
                 break;
             case R.id.RB_3:
@@ -207,29 +207,29 @@ public class MainTabActivty extends Activity implements IConnectionStatusCallbac
                 // mTitleNameView.setText(XMPPHelper.splitJidAndServer(PreferenceUtils
                 // .getPrefString(MainActivity.this,
                 // PreferenceConstants.ACCOUNT, "")));
-                mTitleProgressBar.setVisibility(View.GONE);
                 // setStatusImage(true);
                 if (mCurrentIndex == 0)
                 {
+                    mTitleProgressBar.setVisibility(View.GONE);
                     mTitle.setText(getString(R.string.main_tab_message));
-                }else if (mCurrentIndex == 2)
-                {
-                    mTitle.setText(getString(R.string.main_tab_bulletin));
                 }
+
                 break;
             case CoreService.CONNECTING:
                 linkStatus = getString(R.string.login_prompt_msg);
-                mTitleProgressBar.setVisibility(View.VISIBLE);
-                if (mCurrentIndex == 0 || mCurrentIndex == 2) {
+                if (mCurrentIndex == 0) {
                     mTitle.setText(linkStatus);
+                    mTitleProgressBar.setVisibility(View.VISIBLE);
                 }
+
                 break;
             case CoreService.DISCONNECTED:
                 linkStatus = getString(R.string.login_prompt_no);
-                mTitleProgressBar.setVisibility(View.GONE);
-                if (mCurrentIndex == 0 || mCurrentIndex == 2) {
+                if (mCurrentIndex == 0 ) {
+                    mTitleProgressBar.setVisibility(View.GONE);
                     mTitle.setText(linkStatus);
                 }
+
                 T.showLong(this, reason);
                 break;
 

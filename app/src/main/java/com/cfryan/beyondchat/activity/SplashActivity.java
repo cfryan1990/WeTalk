@@ -19,6 +19,8 @@ public class SplashActivity extends Activity {
         public void run() {
 
             startActivity(new Intent(SplashActivity.this, LoginActivity.class));
+            overridePendingTransition(android.support.v7.appcompat.R.anim.abc_grow_fade_in_from_bottom,
+                    android.support.v7.appcompat.R.anim.abc_shrink_fade_out_from_bottom);
             finish();
         }
     };

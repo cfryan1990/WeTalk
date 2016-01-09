@@ -73,9 +73,9 @@ public class SmackImpl implements Smack {
 
     public SmackImpl(CoreService service) {
         String ServerHost = PreferenceUtils.getPrefString(service, PreferenceConstants.Server_IP,
-                PreferenceConstants.DEFAULT_SERVER_IP);// 默认的服务器IP
+                PreferenceConstants.MacBook_SERVER_IP);// 默认的服务器IP
         String ServerName = PreferenceUtils.getPrefString(service, PreferenceConstants.Server_Name,
-                PreferenceConstants.DEFAULT_SERVER_NAME);//默认的服务器名
+                PreferenceConstants.MacBook_SERVER_NAME);//默认的服务器名
         int port = PreferenceUtils.getPrefInt(service, PreferenceConstants.PORT,
                 PreferenceConstants.DEFAULT_PORT_INT);// 端口号，也是留给用户手动设置的
 

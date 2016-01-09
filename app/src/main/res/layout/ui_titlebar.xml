@@ -25,12 +25,13 @@
 
     <ProgressBar
         android:id="@+id/ivTitleProgress"
-        android:layout_width="32px"
-        android:layout_height="32px"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
         android:layout_toLeftOf="@id/ui_titlebar_txt"
         android:layout_centerInParent="true"
+        android:layout_marginRight="5dp"
         android:indeterminateDrawable="@anim/common_loading_1"
-        android:visibility="gone"
+        android:visibility="visible"
          />
 
 
