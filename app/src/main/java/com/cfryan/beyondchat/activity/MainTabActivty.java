@@ -27,15 +27,12 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 public class MainTabActivty extends Activity implements IConnectionStatusCallback {
@@ -87,52 +84,11 @@ public class MainTabActivty extends Activity implements IConnectionStatusCallbac
 
     };
 
-    public static void initSystemBar(Activity activity) {
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-
-            setTranslucentStatus(activity, true);
-
-        }
-
-        SystemBarTintManager tintManager = new SystemBarTintManager(activity);
-
-        tintManager.setStatusBarTintEnabled(true);
-
-// 使用颜色资源
-
-        tintManager.setStatusBarTintResource(R.color.ui_green);
-
-    }
-
-    @TargetApi(19)
-    private static void setTranslucentStatus(Activity activity, boolean on) {
-
-        Window win = activity.getWindow();
-
-        WindowManager.LayoutParams winParams = win.getAttributes();
-
-        final int bits = WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS;
-
-        if (on) {
-
-            winParams.flags |= bits;
-
-        } else {
-
-            winParams.flags &= ~bits;
-
-        }
-
-        win.setAttributes(winParams);
-
-    }
-
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private void setStatusBarColor()
     {
-        getWindow().setStatusBarColor(getResources().getColor(R.color.font_black));
+        getWindow().setStatusBarColor(getResources().getColor(R.color.ui_green));
     }
 
     private int getInternalDimensionSize(Resources res, String key) {
@@ -148,8 +104,6 @@ public class MainTabActivty extends Activity implements IConnectionStatusCallbac
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         startService(new Intent(MainTabActivty.this, CoreService.class));
-
-
         setContentView(R.layout.activity_main_tab);
 
         int mStatusBarHeight = getInternalDimensionSize(getResources(), STATUS_BAR_HEIGHT_RES_NAME);
@@ -160,17 +114,12 @@ public class MainTabActivty extends Activity implements IConnectionStatusCallbac
         }
         else if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
         {
-            View v = (View) findViewById(R.id.ui_status_bar);
-            LinearLayout.LayoutParams dd
+            View StatusBar = (View) findViewById(R.id.ui_status_bar);
+            LinearLayout.LayoutParams barLP
                     = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, mStatusBarHeight);
-            v.setLayoutParams(dd);
+            StatusBar.setLayoutParams(barLP);
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         }
-
-
-//        initSystemBar(this);
-//        getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-//        getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
 
         mTitle = (TextView) findViewById(R.id.ui_titlebar_txt);
         mLeftBtn = (ImageView) findViewById(R.id.ui_titlebar_back_btn);
@@ -299,13 +248,13 @@ public class MainTabActivty extends Activity implements IConnectionStatusCallbac
                 // setStatusImage(true);
                 if (mCurrentIndex == 0)
                 {
-                    mTitleProgressBar.setVisibility(View.GONE);
                     mTitle.setText(getString(R.string.main_tab_message));
                 }
+                mTitleProgressBar.setVisibility(View.GONE);
 
                 break;
             case CoreService.CONNECTING:
-                linkStatus = getString(R.string.login_prompt_msg);
+                linkStatus = getString(R.string.connect_prompt_connecting);
                 if (mCurrentIndex == 0) {
                     mTitle.setText(linkStatus);
                     mTitleProgressBar.setVisibility(View.VISIBLE);
@@ -313,10 +262,10 @@ public class MainTabActivty extends Activity implements IConnectionStatusCallbac
 
                 break;
             case CoreService.DISCONNECTED:
-                linkStatus = getString(R.string.login_prompt_no);
+                linkStatus = getString(R.string.connect_prompt_no);
                 if (mCurrentIndex == 0 ) {
-                    mTitleProgressBar.setVisibility(View.GONE);
                     mTitle.setText(linkStatus);
+                    mTitleProgressBar.setVisibility(View.GONE);
                 }
 
                 T.showLong(this, reason);

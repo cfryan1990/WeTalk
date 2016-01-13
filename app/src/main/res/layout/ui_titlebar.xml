@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="@dimen/ui_title_bar_height"
-    android:background="@color/font_black" >
+    android:background="@color/ui_green" >
     
     <ImageView
         android:id="@+id/ui_titlebar_back_btn"
@@ -11,7 +11,6 @@
 
     <TextView
         android:id="@+id/ui_titlebar_org"
-
         style="@style/titlebar_txt"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="3dp"
@@ -22,12 +21,13 @@
     <TextView
         android:id="@+id/ui_titlebar_txt"
         style="@style/titlebar_txt"
+        android:textStyle="bold"
         android:layout_above="@id/ui_titlebar_org" />
 
     <ProgressBar
         android:id="@+id/ivTitleProgress"
-        android:layout_width="25dp"
-        android:layout_height="25dp"
+        android:layout_width="15dp"
+        android:layout_height="15dp"
         android:layout_toLeftOf="@id/ui_titlebar_txt"
         android:layout_centerInParent="true"
         android:layout_marginRight="5dp"

@@ -10,7 +10,7 @@
         <View
             android:id="@+id/ui_status_bar"
             android:layout_width="match_parent"
-            android:background="@color/font_black"
+            android:background="@color/ui_green"
             android:layout_height="0dp"/>
 
         <include
