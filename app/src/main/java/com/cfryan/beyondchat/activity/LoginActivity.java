@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.support.design.widget.Snackbar;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
@@ -129,6 +130,7 @@ public class LoginActivity extends Activity implements IConnectionStatusCallback
         }
         if (mLoginOutTimeProcess != null && !mLoginOutTimeProcess.running)
             mLoginOutTimeProcess.start();
+            L.i("超时线程","启动");
         if (mLoginDialog != null && !mLoginDialog.isShowing())
             mLoginDialog.show();
         if (mService != null) {
@@ -209,14 +211,17 @@ public class LoginActivity extends Activity implements IConnectionStatusCallback
 
     @Override
     public void connectionStatusChanged(int connectedState, String reason) {
-        // TODO Auto-generated method stub
-        if (mLoginDialog != null && mLoginDialog.isShowing())
-            mLoginDialog.dismiss();
-        if (mLoginOutTimeProcess != null && mLoginOutTimeProcess.running) {
-            mLoginOutTimeProcess.stop();
-            mLoginOutTimeProcess = null;
-        }
+        L.i("connectedState",connectedState+"");
+
+
+
         if (connectedState == mService.CONNECTED) {
+            if (mLoginDialog != null && mLoginDialog.isShowing())
+                mLoginDialog.dismiss();
+            if (mLoginOutTimeProcess != null && mLoginOutTimeProcess.running) {
+                mLoginOutTimeProcess.stop();
+                mLoginOutTimeProcess = null;
+            }
             save2Preferences();
             startActivity(new Intent(this, MainTabActivty.class));
             finish();
@@ -329,6 +334,7 @@ public class LoginActivity extends Activity implements IConnectionStatusCallback
                     return;
                 if (System.currentTimeMillis() - this.startTime > 20 * 1000L) {
                     //20秒未成功登录则超时，给handler发通知
+                    L.i("超时提醒",System.currentTimeMillis() - this.startTime+"");
                     mHandler.sendEmptyMessage(LOGIN_OUT_TIME);
                 }
                 try {

@@ -35,25 +35,25 @@
                 style="@style/main_navigation_tab"
                 android:checked="true"
                 android:drawableTop="@drawable/main_tab_business_selector"
-                android:text="往来" />
+                android:text="@string/main_tab_message" />
 
             <RadioButton
                 android:id="@+id/RB_1"
                 style="@style/main_navigation_tab"
                 android:drawableTop="@drawable/main_tab_business_circle_selector"
-                android:text="联系人" />
+                android:text="@string/main_tab_contact" />
 
             <RadioButton
                 android:id="@+id/RB_2"
                 style="@style/main_navigation_tab"
                 android:drawableTop="@drawable/main_tab_public_board_selector"
-                android:text="公告栏" />
+                android:text="@string/main_tab_activity" />
 
             <RadioButton
                 android:id="@+id/RB_3"
                 style="@style/main_navigation_tab"
                 android:drawableTop="@drawable/main_tab_settings_selector"
-                android:text="设置" />
+                android:text="@string/main_tab_setting" />
         </RadioGroup>
     </LinearLayout>
 

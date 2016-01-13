@@ -12,7 +12,8 @@
         android:layout_margin="5dp"
         android:background="@drawable/shape_high_rounded"
         android:drawableLeft="@mipmap/icon_search"
-        android:hint="  请输入关键字"
+        android:hint="请输入关键字"
+        android:drawablePadding="5dp"
         android:padding="8dp"
         android:singleLine="true"
         android:textSize="15.0dp" />

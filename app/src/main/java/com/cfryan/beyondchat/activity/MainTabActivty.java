@@ -83,6 +83,7 @@ public class MainTabActivty extends Activity implements IConnectionStatusCallbac
         startService(new Intent(MainTabActivty.this, CoreService.class));
         setContentView(R.layout.activity_main_tab);
 
+
         mTitle = (TextView) findViewById(R.id.ui_titlebar_txt);
         mLeftBtn = (ImageView) findViewById(R.id.ui_titlebar_back_btn);
         mLeftBtn.setVisibility(View.GONE);
@@ -184,7 +185,7 @@ public class MainTabActivty extends Activity implements IConnectionStatusCallbac
                 Fragment fragment3 = new ContactFragment();
                 transaction.replace(R.id.content, fragment3);
                 transaction.commit();
-                mTitle.setText(getString(R.string.main_tab_bulletin));
+                mTitle.setText(getString(R.string.main_tab_activity));
                 mCurrentIndex = 2;
                 break;
             case R.id.RB_3:

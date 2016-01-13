@@ -73,9 +73,9 @@ public class SmackImpl implements Smack {
 
     public SmackImpl(CoreService service) {
         String ServerHost = PreferenceUtils.getPrefString(service, PreferenceConstants.Server_IP,
-                PreferenceConstants.MacBook_SERVER_IP);// 默认的服务器IP
+                PreferenceConstants.DEFAULT_SERVER_IP);// 默认的服务器IP
         String ServerName = PreferenceUtils.getPrefString(service, PreferenceConstants.Server_Name,
-                PreferenceConstants.MacBook_SERVER_NAME);//默认的服务器名
+                PreferenceConstants.DEFAULT_SERVER_NAME);//默认的服务器名
         int port = PreferenceUtils.getPrefInt(service, PreferenceConstants.PORT,
                 PreferenceConstants.DEFAULT_PORT_INT);// 端口号，也是留给用户手动设置的
 
@@ -148,11 +148,15 @@ public class SmackImpl implements Smack {
 
         SmackConfiguration.setDefaultPacketReplyTimeout(PACKET_TIMEOUT); //设置超时时间
 
-        mXMPPConnection.connect();
-        if (!mXMPPConnection.isConnected()) {
-            L.e(SmackImpl.class, "smack connect failed");
-            throw new SmackException.NotConnectedException();
+        try {
+            mXMPPConnection.connect();
+        }finally {
+            if (!mXMPPConnection.isConnected()) {
+                L.e(SmackImpl.class, "smack connect server failed");
+                return false;
+            }
         }
+
         mXMPPConnection.addConnectionListener(new ConnectionListener() {
             @Override
             public void connected(XMPPConnection connection) {
@@ -200,9 +204,9 @@ public class SmackImpl implements Smack {
         });
 
         if (!mXMPPConnection.isAuthenticated()) {
-            String ressource = PreferenceUtils.getPrefString(mService, PreferenceConstants.RESSOURCE,
+            String resource = PreferenceUtils.getPrefString(mService, PreferenceConstants.RESSOURCE,
                     XMPP_IDENTITY_NAME);
-            mXMPPConnection.login(account, password, ressource);
+            mXMPPConnection.login(account, password, resource);
         }
 
         return mXMPPConnection.isAuthenticated();

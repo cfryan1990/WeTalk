@@ -46,7 +46,7 @@
 
     <string name="main_tab_message">消息</string>
     <string name="main_tab_contact">联系人</string>
-    <string name="main_tab_bulletin">公告板</string>
+    <string name="main_tab_activity">活动</string>
     <string name="main_tab_setting">设置</string>
 
 
@@ -64,5 +64,7 @@
     <string name="xlistview_header_last_time">上次更新：</string>
     <string name="xlistview_footer_hint_normal">查看更多</string>
     <string name="xlistview_footer_hint_ready">松开载入更多</string>
+    <string name="title_item_list">Items</string>
+    <string name="title_item_detail">Item Detail</string>
 
 </resources>

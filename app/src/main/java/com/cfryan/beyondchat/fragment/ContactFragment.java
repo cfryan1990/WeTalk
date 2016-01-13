@@ -1,8 +1,9 @@
 package com.cfryan.beyondchat.fragment;
 
+import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
-import android.app.Fragment;
+import android.support.design.widget.Snackbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.Gravity;
@@ -18,25 +19,24 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.cfryan.beyondchat.R;
-//import com.cfryan.beyondchat.activity.ChatActivity;
-//import com.cfryan.beyondchat.activity.DetailInfoActivity;
 import com.cfryan.beyondchat.adapter.ContactAdapter;
 import com.cfryan.beyondchat.model.ContactItem;
-import com.cfryan.beyondchat.ui.view.IndexBar;
 import com.cfryan.beyondchat.ui.view.ClearEditText;
+import com.cfryan.beyondchat.ui.view.IndexBar;
+
+//import com.cfryan.beyondchat.activity.ChatActivity;
+//import com.cfryan.beyondchat.activity.DetailInfoActivity;
 
 public class ContactFragment extends Fragment {
-    public ContactFragment() {
-
-    }
-
     private TextView footerview;
-
     private ListView mContactList;
     private IndexBar mIndexBar;
     private TextView mSelectLetterDialog;
     private ContactAdapter mContactAdapter;
     private ClearEditText mFilterEditText;
+    public ContactFragment() {
+
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -154,10 +154,11 @@ public class ContactFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
                 // 这里要利用adapter.getItem(position)来获取当前position所对应的对象
-               String alias = mContactAdapter.getItem(position).model.getRoster().getAlias();
+                String alias = mContactAdapter.getItem(position).model.getRoster().getAlias();
 
-                Toast.makeText(getActivity(), alias, Toast.LENGTH_SHORT).show();
-                startDetailInfoActivity(( mContactAdapter
+                Snackbar.make(view,alias,Snackbar.LENGTH_LONG).show();
+//                Toast.makeText(getActivity(), alias, Toast.LENGTH_SHORT).show();
+                startDetailInfoActivity((mContactAdapter
                                 .getItem(position)).model.getRoster().getJid(),
                         alias);
             }
@@ -165,7 +166,7 @@ public class ContactFragment extends Fragment {
 
     }
 
-	private void startDetailInfoActivity(String userJid, String alias) {
+    private void startDetailInfoActivity(String userJid, String alias) {
 
 //		Intent detailInfoIntent = new Intent(getActivity(),
 //				DetailInfoActivity.class);
@@ -174,15 +175,15 @@ public class ContactFragment extends Fragment {
 //		detailInfoIntent.putExtra(DetailInfoActivity.INTENT_EXTRA_USERNAME,
 //				alias);
 //		startActivity(detailInfoIntent);
-	}
+    }
 
-	private void startChatActivity(String userJid, String userName) {
+    private void startChatActivity(String userJid, String userName) {
 //		Intent chatIntent = new Intent(getActivity(), ChatActivity.class);
 //		Uri userNameUri = Uri.parse(userJid);
 //		chatIntent.setData(userNameUri);
 //		chatIntent.putExtra(ChatActivity.INTENT_EXTRA_USERNAME, userName);
 //		startActivity(chatIntent);
-	}
+    }
 //
 //	private void startPhoneActivity() {
 //		Intent intent = new Intent(getActivity(), PhonesActivity.class);

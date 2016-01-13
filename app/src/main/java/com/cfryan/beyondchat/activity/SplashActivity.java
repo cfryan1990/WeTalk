@@ -29,6 +29,7 @@ public class SplashActivity extends Activity {
         @Override
         public void run() {
             startActivity(new Intent(SplashActivity.this, MainTabActivty.class));
+//            startActivity(new Intent(SplashActivity.this, ItemDetailActivity.class));
             overridePendingTransition(android.support.v7.appcompat.R.anim.abc_grow_fade_in_from_bottom,
                     android.support.v7.appcompat.R.anim.abc_shrink_fade_out_from_bottom);
             finish();
