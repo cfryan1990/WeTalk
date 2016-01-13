@@ -7,7 +7,14 @@
         android:layout_height="match_parent"
         android:orientation="vertical" >
 
-        <include layout="@layout/ui_titlebar" />
+        <View
+            android:id="@+id/ui_status_bar"
+            android:layout_width="match_parent"
+            android:background="@color/font_black"
+            android:layout_height="0dp"/>
+
+        <include
+            layout="@layout/ui_titlebar" />
 
         <FrameLayout
             android:id="@+id/content"

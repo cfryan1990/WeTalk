@@ -13,6 +13,7 @@ import com.cfryan.beyondchat.util.PreferenceConstants;
 import com.cfryan.beyondchat.util.PreferenceUtils;
 import com.cfryan.beyondchat.util.T;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
@@ -21,13 +22,20 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.res.Resources;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 public class MainTabActivty extends Activity implements IConnectionStatusCallback {
@@ -42,6 +50,8 @@ public class MainTabActivty extends Activity implements IConnectionStatusCallbac
     private TextView mTitle;
     private ImageView mLeftBtn;
     private ProgressBar mTitleProgressBar;
+
+    private static final String STATUS_BAR_HEIGHT_RES_NAME = "status_bar_height";
 
     ServiceConnection mServiceConnection = new ServiceConnection() {
 
@@ -77,12 +87,90 @@ public class MainTabActivty extends Activity implements IConnectionStatusCallbac
 
     };
 
+    public static void initSystemBar(Activity activity) {
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+
+            setTranslucentStatus(activity, true);
+
+        }
+
+        SystemBarTintManager tintManager = new SystemBarTintManager(activity);
+
+        tintManager.setStatusBarTintEnabled(true);
+
+// 使用颜色资源
+
+        tintManager.setStatusBarTintResource(R.color.ui_green);
+
+    }
+
+    @TargetApi(19)
+    private static void setTranslucentStatus(Activity activity, boolean on) {
+
+        Window win = activity.getWindow();
+
+        WindowManager.LayoutParams winParams = win.getAttributes();
+
+        final int bits = WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS;
+
+        if (on) {
+
+            winParams.flags |= bits;
+
+        } else {
+
+            winParams.flags &= ~bits;
+
+        }
+
+        win.setAttributes(winParams);
+
+    }
+
+
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    private void setStatusBarColor()
+    {
+        getWindow().setStatusBarColor(getResources().getColor(R.color.font_black));
+    }
+
+    private int getInternalDimensionSize(Resources res, String key) {
+        int result = 0;
+        int resourceId = res.getIdentifier(key, "dimen", "android");
+        if (resourceId > 0) {
+            result = res.getDimensionPixelSize(resourceId);
+        }
+        return result;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         startService(new Intent(MainTabActivty.this, CoreService.class));
+
+
         setContentView(R.layout.activity_main_tab);
 
+        int mStatusBarHeight = getInternalDimensionSize(getResources(), STATUS_BAR_HEIGHT_RES_NAME);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+        {
+            setStatusBarColor();
+        }
+        else if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
+        {
+            View v = (View) findViewById(R.id.ui_status_bar);
+            LinearLayout.LayoutParams dd
+                    = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, mStatusBarHeight);
+            v.setLayoutParams(dd);
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        }
+
+
+//        initSystemBar(this);
+//        getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+//        getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
 
         mTitle = (TextView) findViewById(R.id.ui_titlebar_txt);
         mLeftBtn = (ImageView) findViewById(R.id.ui_titlebar_back_btn);
