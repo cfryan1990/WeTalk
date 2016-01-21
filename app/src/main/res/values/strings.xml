@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">BeyondChat</string>
-    <string name="app_display_name">越信</string>
+    <string name="app_display_name">BeyondChat</string>
     <string name="app_version">V0.0.1</string>
     <string name="app_copy_right">Designed by cfryan\nCompliled by Android Studio</string>
     <string name="action_settings">Settings</string>

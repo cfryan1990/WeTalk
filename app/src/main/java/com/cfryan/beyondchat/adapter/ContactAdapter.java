@@ -205,13 +205,19 @@ public class ContactAdapter extends BaseAdapter implements SectionIndexer, Pinne
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder viewHolder = null;
+        int type = getItemViewType(position);
         if (convertView == null) {
             viewHolder = new ViewHolder();
-            convertView = LayoutInflater.from(mContext).inflate(R.layout.item_contact, null);
-
-            viewHolder.tvTitle = (TextView) convertView.findViewById(R.id.tv_contact_name);
-            viewHolder.tvImage = (ImageView) convertView.findViewById(R.id.iv_contact_avatar);
-            viewHolder.vsDivider = (ViewStub) convertView.findViewById(R.id.viewstub_divider);
+            if (type == ContactItem.SECTION) {
+                convertView = LayoutInflater.from(mContext).inflate(R.layout.item_section, null);
+                viewHolder.tvTitle = (TextView) convertView.findViewById(R.id.tv_contact_section);
+            }
+            else {
+                convertView = LayoutInflater.from(mContext).inflate(R.layout.item_contact, null);
+                viewHolder.tvTitle = (TextView) convertView.findViewById(R.id.tv_contact_name);
+                viewHolder.tvImage = (ImageView) convertView.findViewById(R.id.iv_contact_avatar);
+                viewHolder.vsDivider = (ViewStub) convertView.findViewById(R.id.viewstub_divider);
+            }
             convertView.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
@@ -221,11 +227,11 @@ public class ContactAdapter extends BaseAdapter implements SectionIndexer, Pinne
         if (item.type == ContactItem.SECTION) {
             convertView.setBackgroundColor(parent.getResources().getColor(R.color.grey_main));
             viewHolder.tvTitle.setText(item.letter);
-            viewHolder.tvImage.setVisibility(View.GONE);
+//            viewHolder.tvImage.setVisibility(View.GONE);
         } else {
             convertView.setBackgroundColor(parent.getResources().getColor(R.color.ui_white));
             viewHolder.tvTitle.setText(item.model.getRoster().getAlias());
-            viewHolder.tvImage.setVisibility(View.VISIBLE);
+//            viewHolder.tvImage.setVisibility(View.VISIBLE);
             viewHolder.tvImage.setImageResource(R.mipmap.default_mobile_avatar);
             viewHolder.vsDivider.setVisibility(View.GONE);
             if (getCount() - 1 == position || getItem(position + 1).type == ContactItem.SECTION) {

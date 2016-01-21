@@ -5,7 +5,7 @@
     android:layout_height="fill_parent"
     android:orientation="vertical" >
 
-    <include layout="@layout/ui_titlebar" />
+    <include layout="@layout/ui_title_bar" />
 
     <FrameLayout
         android:id="@+id/chat_body"

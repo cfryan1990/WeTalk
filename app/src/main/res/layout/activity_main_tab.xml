@@ -1,27 +1,27 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    >
+    android:layout_height="match_parent">
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical" >
+        android:orientation="vertical">
 
         <View
             android:id="@+id/ui_status_bar"
             android:layout_width="match_parent"
-            android:background="@color/ui_green"
-            android:layout_height="0dp"/>
+            android:layout_height="0dp"
+            android:background="@color/ui_green" />
 
         <include
-            layout="@layout/ui_titlebar" />
+            android:id="@+id/ui_title_bar"
+            layout="@layout/ui_title_bar" />
 
         <FrameLayout
             android:id="@+id/content"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"
-             />
+            android:layout_weight="1" />
 
         <View
             style="@style/divider_basic"
@@ -35,7 +35,7 @@
             android:layout_gravity="bottom"
             android:background="@android:color/white"
             android:gravity="center"
-            android:orientation="horizontal" >
+            android:orientation="horizontal">
 
             <RadioButton
                 android:id="@+id/RB_0"

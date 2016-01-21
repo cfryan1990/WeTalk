@@ -4,9 +4,12 @@
     <color name="transparent">#00000000</color>
     <color name="ui_white">#FFFFFFFF</color>
 
-    <color name="grey_main">#FFE0E0E0</color>
+    <color name="grey_main">#FFF0F0F0</color>
+    <color name="grey_deep">#FFC0C0C0</color>
+
 
     <color name="ui_green">#FF16BB8E</color>
+    <color name="ui_light_green">#FF3FD979</color>
     <color name="ui_deep_green">#FF108D6C</color>
 
 

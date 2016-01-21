@@ -1,7 +1,9 @@
 package com.cfryan.beyondchat.fragment;
 
+import android.annotation.TargetApi;
 import android.app.Fragment;
 import android.content.Context;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.text.Editable;
@@ -14,9 +16,9 @@ import android.view.ViewStub;
 import android.widget.AdapterView;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.cfryan.beyondchat.R;
 import com.cfryan.beyondchat.adapter.ContactAdapter;
@@ -28,12 +30,13 @@ import com.cfryan.beyondchat.ui.view.IndexBar;
 //import com.cfryan.beyondchat.activity.DetailInfoActivity;
 
 public class ContactFragment extends Fragment {
-    private TextView footerview;
+    private TextView mFooterView;
     private ListView mContactList;
     private IndexBar mIndexBar;
     private TextView mSelectLetterDialog;
     private ContactAdapter mContactAdapter;
     private ClearEditText mFilterEditText;
+
     public ContactFragment() {
 
     }
@@ -54,36 +57,61 @@ public class ContactFragment extends Fragment {
         return layout;
     }
 
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    private void setStatusBarColor() {
+        getActivity().getWindow().setStatusBarColor(getResources().getColor(R.color.grey_deep));
+
+    }
+
     public void initViews(View layout) {
         mContactList = (ListView) layout.findViewById(R.id.lv_contact_listview);
 
-
         LayoutInflater inflater = LayoutInflater.from(getActivity());
-        View newfriendview = (View) inflater.inflate(R.layout.item_contact, null);
-        newfriendview.setBackgroundColor(getResources().getColor(R.color.ui_white));
-        TextView tvnewfriend = (TextView) newfriendview.findViewById(R.id.tv_contact_name);
-        tvnewfriend.setText("新朋友");
-        ImageView ivnewfriend = (ImageView) newfriendview.findViewById(R.id.iv_contact_avatar);
-        ivnewfriend.setImageResource(R.mipmap.ic_push_friends);
+
+        final View searchView = (View) inflater.inflate(R.layout.search_view, null);
+
+        final LinearLayout searchArea = (LinearLayout) layout.findViewById(R.id.frame_search_area);
+        searchView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                View titleBar = (View) getActivity().findViewById(R.id.ui_title_bar);
+                titleBar.setVisibility(View.GONE);
+                View bottomTabBar = (View) getActivity().findViewById(R.id.rg_tab);
+                bottomTabBar.setVisibility(View.GONE);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    setStatusBarColor();
+                }
+                mContactList.removeHeaderView(searchView);
+                searchArea.setVisibility(View.VISIBLE);
+            }
+        });
+
+        View newFriendView = (View) inflater.inflate(R.layout.item_contact, null);
+        newFriendView.setBackgroundColor(getResources().getColor(R.color.ui_white));
+        TextView newFriendTextView = (TextView) newFriendView.findViewById(R.id.tv_contact_name);
+        newFriendTextView.setText("新朋友");
+        ImageView newFriendImageView = (ImageView) newFriendView.findViewById(R.id.iv_contact_avatar);
+        newFriendImageView.setImageResource(R.mipmap.ic_push_friends);
 
         //动态加载view，viewstub要使用inflate必须已经设置了layout
-        ViewStub vsDividerLeft = (ViewStub) newfriendview.findViewById(R.id.viewstub_divider);
+        ViewStub vsDividerLeft = (ViewStub) newFriendView.findViewById(R.id.viewstub_divider);
         vsDividerLeft.setLayoutResource(R.layout.divider_margin_left);
         vsDividerLeft.inflate();
 
-        View addfriendview = (View) inflater.inflate(R.layout.item_contact, null);
-        addfriendview.setBackgroundColor(getResources().getColor(R.color.ui_white));
-        TextView addfriends = (TextView) addfriendview.findViewById(R.id.tv_contact_name);
-        addfriends.setText("添加朋友");
-        ImageView ivaddfriend = (ImageView) addfriendview.findViewById(R.id.iv_contact_avatar);
-        ivaddfriend.setImageResource(R.mipmap.ic_add_friends);
+        View addFriendView = (View) inflater.inflate(R.layout.item_contact, null);
+        addFriendView.setBackgroundColor(getResources().getColor(R.color.ui_white));
+        TextView addFriendTextView = (TextView) addFriendView.findViewById(R.id.tv_contact_name);
+        addFriendTextView.setText("添加朋友");
+        ImageView addFriendImageView = (ImageView) addFriendView.findViewById(R.id.iv_contact_avatar);
+        addFriendImageView.setImageResource(R.mipmap.ic_add_friends);
 
-        ViewStub vsDividerfull = (ViewStub) addfriendview.findViewById(R.id.viewstub_divider);
-        vsDividerfull.setLayoutResource(R.layout.divider_full);
-        vsDividerfull.inflate();
+        ViewStub vsDividerFull = (ViewStub) addFriendView.findViewById(R.id.viewstub_divider);
+        vsDividerFull.setLayoutResource(R.layout.divider_full);
+        vsDividerFull.inflate();
 
-        mContactList.addHeaderView(newfriendview);
-        mContactList.addHeaderView(addfriendview);
+        mContactList.addHeaderView(searchView);
+        mContactList.addHeaderView(newFriendView);
+        mContactList.addHeaderView(addFriendView);
 
 //      mContactList.setFastScrollEnabled(true);
 
@@ -117,14 +145,15 @@ public class ContactFragment extends Fragment {
         });
 
         //listview底部设置
-        footerview = (TextView) inflater.inflate(R.layout.item_tv_footer, null);
-        footerview.setText(mContactAdapter.getContactSize() + "位联系人");
-        mContactList.addFooterView(footerview);
+        mFooterView = (TextView) inflater.inflate(R.layout.item_tv_footer, null);
+        String ContactSizeString = mContactAdapter.getContactSize() + "位联系人";
+        mFooterView.setText(ContactSizeString);
+        mContactList.addFooterView(mFooterView);
 
         mContactList.setAdapter(mContactAdapter);
 
-        mFilterEditText = (ClearEditText) layout.findViewById(R.id.filter_edit);
 
+        mFilterEditText = (ClearEditText) layout.findViewById(R.id.filter_edit);
         mFilterEditText.setShakeAnimation();
         // 根据输入框输入值的改变来过滤搜索
         mFilterEditText.addTextChangedListener(new TextWatcher() {
@@ -134,7 +163,7 @@ public class ContactFragment extends Fragment {
                                       int count) {
                 // 当输入框里面的值为空，更新为原来的列表，否则为过滤数据列表
                 mContactAdapter.setFilterString(s.toString());
-                footerview.setText(mContactAdapter.getContactSize() + "位联系人");
+                mFooterView.setText(mContactAdapter.getContactSize() + "位联系人");
             }
 
             @Override
@@ -156,7 +185,7 @@ public class ContactFragment extends Fragment {
                 // 这里要利用adapter.getItem(position)来获取当前position所对应的对象
                 String alias = mContactAdapter.getItem(position).model.getRoster().getAlias();
 
-                Snackbar.make(view,alias,Snackbar.LENGTH_LONG).show();
+                Snackbar.make(view, alias, Snackbar.LENGTH_LONG).show();
 //                Toast.makeText(getActivity(), alias, Toast.LENGTH_SHORT).show();
                 startDetailInfoActivity((mContactAdapter
                                 .getItem(position)).model.getRoster().getJid(),
