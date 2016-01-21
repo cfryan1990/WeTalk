@@ -7,10 +7,11 @@
     <FrameLayout
         android:id="@+id/fragment_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:animateLayoutChanges="true">
 
         <com.cfryan.beyondchat.ui.view.PinnedSectionListView
-            android:id="@+id/lv_contact_listview"
+            android:id="@+id/lv_contact_list_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:divider="@null"
@@ -19,50 +20,5 @@
 
     </FrameLayout>
 
-    <LinearLayout
-        android:id="@+id/frame_search_area"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#AA000000"
-        android:visibility="gone"
-        android:orientation="vertical">
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/grey_deep"
-            android:padding="3dp">
-
-            <Button
-                android:id="@+id/btn_search_cancel"
-                android:layout_width="50dp"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:background="@color/transparent"
-                android:text="取消"
-                android:textColor="@color/ui_deep_green" />
-
-            <com.cfryan.beyondchat.ui.view.ClearEditText
-                android:id="@+id/filter_edit"
-                android:layout_width="match_parent"
-                android:layout_height="35dp"
-                android:layout_margin="5dp"
-                android:layout_toLeftOf="@id/btn_search_cancel"
-                android:background="@drawable/shape_high_rounded"
-                android:drawableLeft="@mipmap/icon_search"
-                android:drawablePadding="5dp"
-                android:hint="搜索"
-                android:paddingLeft="8dp"
-                android:paddingRight="8dp"
-                android:singleLine="true"
-                android:textSize="14.0dp" />
-        </RelativeLayout>
-
-        <ListView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-        </ListView>
-    </LinearLayout>
 
 </RelativeLayout>

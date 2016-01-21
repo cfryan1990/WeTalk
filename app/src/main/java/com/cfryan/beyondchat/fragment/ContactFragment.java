@@ -13,11 +13,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewStub;
+import android.view.animation.Animation;
+import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.cfryan.beyondchat.R;
@@ -30,8 +34,16 @@ import com.cfryan.beyondchat.ui.view.IndexBar;
 //import com.cfryan.beyondchat.activity.DetailInfoActivity;
 
 public class ContactFragment extends Fragment {
+    private View titleBar;
+    private View bottomTabBar;
+
+    private LinearLayout searchArea;
+
+    private Button searchCancelBtn;
+
     private TextView mFooterView;
     private ListView mContactList;
+    private ListView mSearchResultList;
     private IndexBar mIndexBar;
     private TextView mSelectLetterDialog;
     private ContactAdapter mContactAdapter;
@@ -58,31 +70,84 @@ public class ContactFragment extends Fragment {
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    private void setStatusBarColor() {
-        getActivity().getWindow().setStatusBarColor(getResources().getColor(R.color.grey_deep));
+    private void setStatusBarColor(int color) {
+        getActivity().getWindow().setStatusBarColor(color);
+
 
     }
 
     public void initViews(View layout) {
-        mContactList = (ListView) layout.findViewById(R.id.lv_contact_listview);
+        titleBar = (View) getActivity().findViewById(R.id.ui_title_bar);
+        bottomTabBar = (View) getActivity().findViewById(R.id.rg_tab);
+
+        final FrameLayout view = (FrameLayout) layout.findViewById(R.id.fragment_layout);
+        searchArea = (LinearLayout) getActivity().findViewById(R.id.frame_search_area);
+        searchCancelBtn = (Button) getActivity().findViewById(R.id.btn_search_cancel);
+        mContactList = (ListView) layout.findViewById(R.id.lv_contact_list_view);
+        mSearchResultList = (ListView) getActivity().findViewById(R.id.lv_search_result);
+
+        final RelativeLayout relativeLayout = (RelativeLayout) getActivity().findViewById(R.id.layout_search);
+
 
         LayoutInflater inflater = LayoutInflater.from(getActivity());
 
         final View searchView = (View) inflater.inflate(R.layout.search_view, null);
 
-        final LinearLayout searchArea = (LinearLayout) layout.findViewById(R.id.frame_search_area);
+
         searchView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                View titleBar = (View) getActivity().findViewById(R.id.ui_title_bar);
-                titleBar.setVisibility(View.GONE);
-                View bottomTabBar = (View) getActivity().findViewById(R.id.rg_tab);
-                bottomTabBar.setVisibility(View.GONE);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    setStatusBarColor();
-                }
-                mContactList.removeHeaderView(searchView);
+                view.setVisibility(View.GONE);
                 searchArea.setVisibility(View.VISIBLE);
+                bottomTabBar.setVisibility(View.GONE);
+
+                Animation transTitle = new TranslateAnimation(0,0,0,-100);
+                transTitle.setDuration(300);
+                transTitle.setAnimationListener(new Animation.AnimationListener() {
+                    @Override
+                    public void onAnimationStart(Animation animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        titleBar.setVisibility(View.GONE);
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                            setStatusBarColor(getResources().getColor(R.color.grey_deep));
+                        }
+
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {
+
+                    }
+                });
+                titleBar.startAnimation(transTitle);
+                searchArea.startAnimation(transTitle);
+
+
+
+
+//                Animation trans = new TranslateAnimation(0,0,0,-20);
+//                trans.setDuration(3000);
+//                searchView.setAnimation(trans);
+//                trans.startNow();
+
+
+            }
+        });
+
+        searchCancelBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                titleBar.setVisibility(View.VISIBLE);
+                bottomTabBar.setVisibility(View.VISIBLE);
+                searchArea.setVisibility(View.GONE);
+                view.setVisibility(View.VISIBLE);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    setStatusBarColor(getResources().getColor(R.color.ui_green));
+                }
             }
         });
 
@@ -92,7 +157,6 @@ public class ContactFragment extends Fragment {
         newFriendTextView.setText("新朋友");
         ImageView newFriendImageView = (ImageView) newFriendView.findViewById(R.id.iv_contact_avatar);
         newFriendImageView.setImageResource(R.mipmap.ic_push_friends);
-
         //动态加载view，viewstub要使用inflate必须已经设置了layout
         ViewStub vsDividerLeft = (ViewStub) newFriendView.findViewById(R.id.viewstub_divider);
         vsDividerLeft.setLayoutResource(R.layout.divider_margin_left);
@@ -104,7 +168,6 @@ public class ContactFragment extends Fragment {
         addFriendTextView.setText("添加朋友");
         ImageView addFriendImageView = (ImageView) addFriendView.findViewById(R.id.iv_contact_avatar);
         addFriendImageView.setImageResource(R.mipmap.ic_add_friends);
-
         ViewStub vsDividerFull = (ViewStub) addFriendView.findViewById(R.id.viewstub_divider);
         vsDividerFull.setLayoutResource(R.layout.divider_full);
         vsDividerFull.inflate();
@@ -112,8 +175,6 @@ public class ContactFragment extends Fragment {
         mContactList.addHeaderView(searchView);
         mContactList.addHeaderView(newFriendView);
         mContactList.addHeaderView(addFriendView);
-
-//      mContactList.setFastScrollEnabled(true);
 
         mContactAdapter = new ContactAdapter(getActivity());
 
@@ -123,7 +184,7 @@ public class ContactFragment extends Fragment {
             index[i] = tmp[i].letter;
         }
 
-        FrameLayout view = (FrameLayout) layout.findViewById(R.id.fragment_layout);
+
         mIndexBar = new IndexBar(getActivity(), index);
         FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(50, 30 * index.length);
         layoutParams.gravity = Gravity.CENTER | Gravity.END;
@@ -153,7 +214,7 @@ public class ContactFragment extends Fragment {
         mContactList.setAdapter(mContactAdapter);
 
 
-        mFilterEditText = (ClearEditText) layout.findViewById(R.id.filter_edit);
+        mFilterEditText = (ClearEditText) getActivity().findViewById(R.id.filter_edit);
         mFilterEditText.setShakeAnimation();
         // 根据输入框输入值的改变来过滤搜索
         mFilterEditText.addTextChangedListener(new TextWatcher() {
@@ -224,4 +285,6 @@ public class ContactFragment extends Fragment {
 //		Intent intent = new Intent(getActivity(), NewFriendsActivity.class);
 //		startActivity(intent);
 //	}
+
+
 }

@@ -7,10 +7,7 @@
         android:centerColor="@android:color/white"
         android:endColor="@android:color/white"
         android:startColor="@android:color/white" />
-    
-    <stroke
-        android:width="0.5dp"
-        android:color="@color/grey_main" />
+
 
     <corners
         android:bottomLeftRadius="5dp"
