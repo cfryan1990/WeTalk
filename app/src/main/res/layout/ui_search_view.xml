@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layout_search"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/grey_main"
+    android:padding="3dp">
+
+    <RelativeLayout
+        android:id="@+id/rl_search_cancel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:visibility="gone"
+        android:animateLayoutChanges="true">
+
+        <Button
+            android:id="@+id/btn_search_cancel"
+            android:layout_width="50dp"
+            android:layout_height="25dp"
+            android:background="@color/transparent"
+            android:text="取消"
+            android:textColor="@color/ui_deep_green" />
+    </RelativeLayout>
+
+
+    <com.cfryan.beyondchat.ui.view.ClearEditText
+        android:id="@+id/filter_edit"
+        android:layout_width="match_parent"
+        android:layout_height="25dp"
+        android:layout_centerVertical="true"
+        android:layout_margin="5dp"
+        android:background="@drawable/shape_high_rounded"
+        android:layout_toLeftOf="@id/rl_search_cancel"
+        android:drawableLeft="@mipmap/icon_search"
+        android:drawablePadding="5dp"
+        android:hint="搜索"
+        android:visibility="gone"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:singleLine="true"
+        android:textSize="14.0dp" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:id="@+id/anim_search_view_frame"
+            android:layout_width="match_parent"
+            android:layout_height="25dp"
+            android:background="@drawable/shape_high_rounded"
+            android:orientation="horizontal"
+            android:layout_margin="5dp"
+            android:gravity="center">
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_margin="5dp"
+            android:gravity="center">
+
+            <ImageView
+                android:id="@+id/anim_iv_search"
+                android:layout_width="wrap_content"
+                android:layout_height="25dp"
+                android:layout_centerInParent="true"
+                android:src="@mipmap/icon_search" />
+
+            <TextView
+                android:id="@+id/anim_tv_search"
+                android:layout_width="wrap_content"
+                android:layout_height="25dp"
+                android:layout_centerInParent="true"
+                android:layout_marginLeft="5dp"
+                android:gravity="center_vertical"
+                android:text="搜索" />
+        </LinearLayout>
+
+    </RelativeLayout>
+
+
+</RelativeLayout>
+

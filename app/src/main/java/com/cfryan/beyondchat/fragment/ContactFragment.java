@@ -1,19 +1,24 @@
 package com.cfryan.beyondchat.fragment;
 
+import android.animation.ObjectAnimator;
 import android.annotation.TargetApi;
 import android.app.Fragment;
 import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.SystemClock;
+import android.support.annotation.MainThread;
 import android.support.design.widget.Snackbar;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewStub;
 import android.view.animation.Animation;
+import android.view.animation.ScaleAnimation;
 import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -29,6 +34,7 @@ import com.cfryan.beyondchat.adapter.ContactAdapter;
 import com.cfryan.beyondchat.model.ContactItem;
 import com.cfryan.beyondchat.ui.view.ClearEditText;
 import com.cfryan.beyondchat.ui.view.IndexBar;
+import com.cfryan.beyondchat.util.DensityUtil;
 
 //import com.cfryan.beyondchat.activity.ChatActivity;
 //import com.cfryan.beyondchat.activity.DetailInfoActivity;
@@ -80,29 +86,32 @@ public class ContactFragment extends Fragment {
         titleBar = (View) getActivity().findViewById(R.id.ui_title_bar);
         bottomTabBar = (View) getActivity().findViewById(R.id.rg_tab);
 
-        final FrameLayout view = (FrameLayout) layout.findViewById(R.id.fragment_layout);
         searchArea = (LinearLayout) getActivity().findViewById(R.id.frame_search_area);
         searchCancelBtn = (Button) getActivity().findViewById(R.id.btn_search_cancel);
-        mContactList = (ListView) layout.findViewById(R.id.lv_contact_list_view);
         mSearchResultList = (ListView) getActivity().findViewById(R.id.lv_search_result);
 
-        final RelativeLayout relativeLayout = (RelativeLayout) getActivity().findViewById(R.id.layout_search);
+        final LinearLayout animSearchViewFrame = (LinearLayout) getActivity().findViewById(R.id.anim_search_view_frame);
 
+        final TextView animSearchTextView = (TextView) getActivity().findViewById(R.id.anim_tv_search);
+        final ImageView animSearchImageView = (ImageView) getActivity().findViewById(R.id.anim_iv_search);
+
+        final RelativeLayout cancelBtnRL = (RelativeLayout) getActivity().findViewById(R.id.rl_search_cancel);
+        mFilterEditText = (ClearEditText) getActivity().findViewById(R.id.filter_edit);
+
+        final FrameLayout frameContactView = (FrameLayout) layout.findViewById(R.id.fragment_layout);
+        mContactList = (ListView) layout.findViewById(R.id.lv_contact_list_view);
 
         LayoutInflater inflater = LayoutInflater.from(getActivity());
-
-        final View searchView = (View) inflater.inflate(R.layout.search_view, null);
-
-
-        searchView.setOnClickListener(new View.OnClickListener() {
+        final View searchViewInContactList = (View) inflater.inflate(R.layout.search_view, null);
+        searchViewInContactList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                view.setVisibility(View.GONE);
+                frameContactView.setVisibility(View.GONE);
                 searchArea.setVisibility(View.VISIBLE);
                 bottomTabBar.setVisibility(View.GONE);
 
-                Animation transTitle = new TranslateAnimation(0,0,0,-100);
-                transTitle.setDuration(300);
+                Animation transTitle = new TranslateAnimation(0, 0, 0, -DensityUtil.dip2px(getActivity(),35.0f));
+                transTitle.setDuration(500);
                 transTitle.setAnimationListener(new Animation.AnimationListener() {
                     @Override
                     public void onAnimationStart(Animation animation) {
@@ -123,10 +132,65 @@ public class ContactFragment extends Fragment {
 
                     }
                 });
+
+
                 titleBar.startAnimation(transTitle);
                 searchArea.startAnimation(transTitle);
 
+                ScaleAnimation _scaleAnimation = new ScaleAnimation(1.0f, 0.85f, 1.0f, 1.0f, Animation.RELATIVE_TO_PARENT, 0f, Animation.RELATIVE_TO_SELF, 0f);
+                _scaleAnimation.setDuration(500);
+                _scaleAnimation.setZAdjustment(Animation.ZORDER_TOP);
+//                _scaleAnimation.setRepeatCount(1);
+//                _scaleAnimation.setRepeatMode(Animation.REVERSE);//必须设置setRepeatCount此设置才生效，动画执行完成之后按照逆方式动画返回
+                animSearchViewFrame.startAnimation(_scaleAnimation);
+                _scaleAnimation.setAnimationListener(new Animation.AnimationListener() {
+                    @Override
+                    public void onAnimationStart(Animation animation) {
 
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        animSearchViewFrame.setVisibility(View.GONE);
+                        mFilterEditText.setVisibility(View.VISIBLE);
+                        cancelBtnRL.setVisibility(View.VISIBLE);
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {
+
+                    }
+                });
+
+                DisplayMetrics dm = new DisplayMetrics();
+                getActivity().getWindowManager().getDefaultDisplay().getMetrics(dm);
+                int width = dm.widthPixels;    //得到宽度
+                int height = dm.heightPixels;  //得到高度
+
+                Animation transView = new TranslateAnimation(0,-width/2+20 , 0, 0);
+                transView.setDuration(500);
+
+                animSearchImageView.startAnimation(transView);
+                animSearchTextView.startAnimation(transView);
+
+
+                transView.setAnimationListener(new Animation.AnimationListener() {
+                    @Override
+                    public void onAnimationStart(Animation animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        animSearchImageView.setVisibility(View.GONE);
+                        animSearchTextView.setVisibility(View.GONE);
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {
+
+                    }
+                });
 
 
 //                Animation trans = new TranslateAnimation(0,0,0,-20);
@@ -144,7 +208,7 @@ public class ContactFragment extends Fragment {
                 titleBar.setVisibility(View.VISIBLE);
                 bottomTabBar.setVisibility(View.VISIBLE);
                 searchArea.setVisibility(View.GONE);
-                view.setVisibility(View.VISIBLE);
+                frameContactView.setVisibility(View.VISIBLE);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     setStatusBarColor(getResources().getColor(R.color.ui_green));
                 }
@@ -172,7 +236,7 @@ public class ContactFragment extends Fragment {
         vsDividerFull.setLayoutResource(R.layout.divider_full);
         vsDividerFull.inflate();
 
-        mContactList.addHeaderView(searchView);
+        mContactList.addHeaderView(searchViewInContactList);
         mContactList.addHeaderView(newFriendView);
         mContactList.addHeaderView(addFriendView);
 
@@ -189,7 +253,7 @@ public class ContactFragment extends Fragment {
         FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(50, 30 * index.length);
         layoutParams.gravity = Gravity.CENTER | Gravity.END;
         mIndexBar.setLayoutParams(layoutParams);
-        view.addView(mIndexBar);
+        frameContactView.addView(mIndexBar);
 
         // 设置右侧触摸监听
         mIndexBar.setOnTouchingLetterChangedListener(new IndexBar.OnTouchingLetterChangedListener() {
@@ -214,8 +278,8 @@ public class ContactFragment extends Fragment {
         mContactList.setAdapter(mContactAdapter);
 
 
-        mFilterEditText = (ClearEditText) getActivity().findViewById(R.id.filter_edit);
-        mFilterEditText.setShakeAnimation();
+
+//        mFilterEditText.setShakeAnimation();
         // 根据输入框输入值的改变来过滤搜索
         mFilterEditText.addTextChangedListener(new TextWatcher() {
 

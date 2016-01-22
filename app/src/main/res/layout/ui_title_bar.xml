@@ -5,13 +5,13 @@
     android:background="@color/ui_green" >
     
     <ImageView
-        android:id="@+id/ui_titlebar_back_btn"
-        style="@style/titlebar_left_btn"
+        android:id="@+id/ui_title_bar_back_btn"
+        style="@style/title_bar_left_btn"
         android:onClick="myClickHandler" />
 
     <TextView
-        android:id="@+id/ui_titlebar_org"
-        style="@style/titlebar_txt"
+        android:id="@+id/ui_title_bar_org"
+        style="@style/title_bar_txt"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="3dp"
         android:text="杭州电子科技大学"
@@ -19,16 +19,16 @@
         android:visibility="gone" />
 
     <TextView
-        android:id="@+id/ui_titlebar_txt"
-        style="@style/titlebar_txt"
+        android:id="@+id/ui_title_bar_txt"
+        style="@style/title_bar_txt"
         android:textStyle="bold"
-        android:layout_above="@id/ui_titlebar_org" />
+        android:layout_above="@id/ui_title_bar_org" />
 
     <ProgressBar
         android:id="@+id/ivTitleProgress"
         android:layout_width="15dp"
         android:layout_height="15dp"
-        android:layout_toLeftOf="@id/ui_titlebar_txt"
+        android:layout_toLeftOf="@id/ui_title_bar_txt"
         android:layout_centerInParent="true"
         android:layout_marginRight="5dp"
         android:indeterminateDrawable="@anim/common_loading_1"

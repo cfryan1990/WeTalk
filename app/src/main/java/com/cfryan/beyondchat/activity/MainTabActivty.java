@@ -121,8 +121,8 @@ public class MainTabActivty extends Activity implements IConnectionStatusCallbac
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         }
 
-        mTitle = (TextView) findViewById(R.id.ui_titlebar_txt);
-        mLeftBtn = (ImageView) findViewById(R.id.ui_titlebar_back_btn);
+        mTitle = (TextView) findViewById(R.id.ui_title_bar_txt);
+        mLeftBtn = (ImageView) findViewById(R.id.ui_title_bar_back_btn);
         mLeftBtn.setVisibility(View.GONE);
 
         mTitleProgressBar = (ProgressBar) findViewById(R.id.ivTitleProgress);
