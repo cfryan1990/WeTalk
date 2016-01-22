@@ -1,6 +1,8 @@
 package com.cfryan.beyondchat.util;
 
+import android.app.Activity;
 import android.content.Context;
+import android.util.DisplayMetrics;
 
 /**
  * Created by cf on 2016/1/22.
@@ -21,4 +23,30 @@ public class DensityUtil {
         final float scale = context.getResources().getDisplayMetrics().density;
         return (int) (pxValue / scale + 0.5f);
     }
+
+    public static DisplayMeasure getDisplayMeasure(Context context)
+    {
+        DisplayMeasure displayData = new DisplayMeasure();
+        DisplayMetrics dm = new DisplayMetrics();
+        ((Activity)context).getWindowManager().getDefaultDisplay().getMetrics(dm);
+        displayData.width = dm.widthPixels;
+        displayData.height = dm.heightPixels;
+        return displayData;
+    }
+
+    public static class DisplayMeasure
+    {
+        public int width;
+        public int height;
+        public int getWidth()
+        {
+            return width;
+        }
+        public int getHeight()
+        {
+            return height;
+        }
+    }
+
+
 }

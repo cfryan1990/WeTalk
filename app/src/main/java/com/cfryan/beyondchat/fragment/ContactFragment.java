@@ -12,6 +12,7 @@ import android.support.design.widget.Snackbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -110,8 +111,8 @@ public class ContactFragment extends Fragment {
                 searchArea.setVisibility(View.VISIBLE);
                 bottomTabBar.setVisibility(View.GONE);
 
-                Animation transTitle = new TranslateAnimation(0, 0, 0, -DensityUtil.dip2px(getActivity(),35.0f));
-                transTitle.setDuration(500);
+                Animation transTitle = new TranslateAnimation(0, 0, 0, -DensityUtil.dip2px(getActivity(), 35.0f));
+                transTitle.setDuration(300);
                 transTitle.setAnimationListener(new Animation.AnimationListener() {
                     @Override
                     public void onAnimationStart(Animation animation) {
@@ -138,7 +139,7 @@ public class ContactFragment extends Fragment {
                 searchArea.startAnimation(transTitle);
 
                 ScaleAnimation _scaleAnimation = new ScaleAnimation(1.0f, 0.85f, 1.0f, 1.0f, Animation.RELATIVE_TO_PARENT, 0f, Animation.RELATIVE_TO_SELF, 0f);
-                _scaleAnimation.setDuration(500);
+                _scaleAnimation.setDuration(300);
                 _scaleAnimation.setZAdjustment(Animation.ZORDER_TOP);
 //                _scaleAnimation.setRepeatCount(1);
 //                _scaleAnimation.setRepeatMode(Animation.REVERSE);//必须设置setRepeatCount此设置才生效，动画执行完成之后按照逆方式动画返回
@@ -162,13 +163,23 @@ public class ContactFragment extends Fragment {
                     }
                 });
 
-                DisplayMetrics dm = new DisplayMetrics();
-                getActivity().getWindowManager().getDefaultDisplay().getMetrics(dm);
-                int width = dm.widthPixels;    //得到宽度
-                int height = dm.heightPixels;  //得到高度
+                int width = DensityUtil.getDisplayMeasure(getActivity()).width;
 
-                Animation transView = new TranslateAnimation(0,-width/2+20 , 0, 0);
-                transView.setDuration(500);
+                int w = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
+                int h = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
+
+                animSearchImageView.measure(w, h);
+                animSearchTextView.measure(w, h);
+                int viewWidth = animSearchImageView.getMeasuredHeight()
+                        +animSearchTextView.getMeasuredWidth()
+                        +DensityUtil.dip2px(getActivity(),5.0f);
+
+
+                Animation transView = new TranslateAnimation(0, - ((width - viewWidth )/2 - DensityUtil.dip2px(getActivity(),16.0f)), 0, 0);
+                transView.setDuration(300);
+
+
+                Log.i("animSearchImageView",viewWidth+"");
 
                 animSearchImageView.startAnimation(transView);
                 animSearchTextView.startAnimation(transView);
@@ -191,6 +202,7 @@ public class ContactFragment extends Fragment {
 
                     }
                 });
+
 
 
 //                Animation trans = new TranslateAnimation(0,0,0,-20);
@@ -276,7 +288,6 @@ public class ContactFragment extends Fragment {
         mContactList.addFooterView(mFooterView);
 
         mContactList.setAdapter(mContactAdapter);
-
 
 
 //        mFilterEditText.setShakeAnimation();

@@ -44,15 +44,15 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp">
         <LinearLayout
             android:id="@+id/anim_search_view_frame"
             android:layout_width="match_parent"
             android:layout_height="25dp"
             android:background="@drawable/shape_high_rounded"
             android:orientation="horizontal"
-            android:layout_margin="5dp"
-            android:gravity="center">
+            >
 
         </LinearLayout>
 
@@ -60,7 +60,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_margin="5dp"
             android:gravity="center">
 
             <ImageView
