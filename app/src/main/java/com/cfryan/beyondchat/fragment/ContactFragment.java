@@ -1,17 +1,13 @@
 package com.cfryan.beyondchat.fragment;
 
-import android.animation.ObjectAnimator;
 import android.annotation.TargetApi;
 import android.app.Fragment;
 import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.SystemClock;
-import android.support.annotation.MainThread;
 import android.support.design.widget.Snackbar;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -37,24 +33,40 @@ import com.cfryan.beyondchat.ui.view.ClearEditText;
 import com.cfryan.beyondchat.ui.view.IndexBar;
 import com.cfryan.beyondchat.util.DensityUtil;
 
+import java.math.BigDecimal;
+
 //import com.cfryan.beyondchat.activity.ChatActivity;
 //import com.cfryan.beyondchat.activity.DetailInfoActivity;
 
 public class ContactFragment extends Fragment {
+    private static final int ANIMATION_DURATION = 300;
+    private static final int CONTACT_LIST_MODE = 0;
+    private static final int SEARCH_VIEW_MODE = 1;
+
+    private int UIMode = 0;
+
     private View titleBar;
     private View bottomTabBar;
 
     private LinearLayout searchArea;
-
     private Button searchCancelBtn;
-
-    private TextView mFooterView;
-    private ListView mContactList;
+    private RelativeLayout cancelBtnLayout;
+    private ClearEditText mFilterEditText;
     private ListView mSearchResultList;
+
+    //联系人列表的主要View
+    private TextView mFooterView;
+    private FrameLayout frameContactView;
+    private ListView mContactList;
     private IndexBar mIndexBar;
+
+    //搜索界面展开的辅助动画View，包括独立的搜索框，搜索图标，搜索文字标签
+    private LinearLayout animSearchViewFrame;
+    private TextView animSearchTextView;
+    private ImageView animSearchImageView;
+
     private TextView mSelectLetterDialog;
     private ContactAdapter mContactAdapter;
-    private ClearEditText mFilterEditText;
 
     public ContactFragment() {
 
@@ -83,133 +95,154 @@ public class ContactFragment extends Fragment {
 
     }
 
-    public void initViews(View layout) {
-        titleBar = (View) getActivity().findViewById(R.id.ui_title_bar);
-        bottomTabBar = (View) getActivity().findViewById(R.id.rg_tab);
+    private Animation CreateTitleBarTransAnimation(float toYMove, final int StatusBarColorAfterAnimation) {
+        Animation transTitle = new TranslateAnimation(0, 0, 0, toYMove);
+        transTitle.setDuration(ANIMATION_DURATION);
+        transTitle.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
 
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+
+                switch (UIMode) {
+                    case SEARCH_VIEW_MODE:
+                        titleBar.setVisibility(View.VISIBLE);
+                        break;
+                    case CONTACT_LIST_MODE:
+                        titleBar.setVisibility(View.GONE);
+                        break;
+                }
+                if (StatusBarColorAfterAnimation != 0) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        setStatusBarColor(StatusBarColorAfterAnimation);
+                    }
+                }
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+        return transTitle;
+    }
+
+    private Animation CreateScaleAnimation(float scale) {
+
+        Animation scaleAnimation = new ScaleAnimation(1.0f, scale, 1.0f, 1.0f, Animation.RELATIVE_TO_PARENT, 0f, Animation.RELATIVE_TO_SELF, 0f);
+        scaleAnimation.setDuration(ANIMATION_DURATION);
+        scaleAnimation.setZAdjustment(Animation.ZORDER_TOP);
+//                scaleAnimation.setRepeatCount(1);
+//                scaleAnimation.setRepeatMode(Animation.REVERSE);//必须设置setRepeatCount此设置才生效，动画执行完成之后按照逆方式动画返回
+        scaleAnimation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                switch (UIMode) {
+                    case SEARCH_VIEW_MODE:
+                        animSearchViewFrame.setVisibility(View.VISIBLE);
+                        mFilterEditText.setVisibility(View.GONE);
+                        cancelBtnLayout.setVisibility(View.GONE);
+                        break;
+                    case CONTACT_LIST_MODE:
+                        animSearchViewFrame.setVisibility(View.GONE);
+                        mFilterEditText.setVisibility(View.VISIBLE);
+                        cancelBtnLayout.setVisibility(View.VISIBLE);
+                        break;
+                }
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+
+        return scaleAnimation;
+    }
+
+    private Animation CreateIconTransAnimation(float displayWidth) {
+        float viewsWidth = DensityUtil.getViewMeasure(animSearchImageView).getMeasureWidth()
+                + DensityUtil.getViewMeasure(animSearchTextView).getMeasureWidth()
+                + getResources().getDimension(R.dimen.ui_basic_margin);
+        Log.i("animSearchImageView", viewsWidth + "");
+        Animation transView = new TranslateAnimation(0, -((displayWidth - viewsWidth) / 2 - DensityUtil.dip2px(getActivity(), 16.0f)), 0, 0);
+        transView.setDuration(ANIMATION_DURATION);
+        transView.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                switch (UIMode)
+                {
+                    case SEARCH_VIEW_MODE:
+                        animSearchImageView.setVisibility(View.VISIBLE);
+                        animSearchTextView.setVisibility(View.VISIBLE);
+                        break;
+                    case CONTACT_LIST_MODE:
+                        animSearchImageView.setVisibility(View.GONE);
+                        animSearchTextView.setVisibility(View.GONE);
+                        break;
+                }
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+
+        return transView;
+    }
+
+    private void setSearchView(View SearchViewTrigger) {
+        //view from Activity, when search action happens, many views should change.
+        titleBar = getActivity().findViewById(R.id.ui_title_bar);
+        bottomTabBar = getActivity().findViewById(R.id.rg_tab);
+
+        //搜索本体，位于MainTabActivity的布局中
         searchArea = (LinearLayout) getActivity().findViewById(R.id.frame_search_area);
+        mFilterEditText = (ClearEditText) getActivity().findViewById(R.id.filter_edit);
+        cancelBtnLayout = (RelativeLayout) getActivity().findViewById(R.id.layout_search_cancel);
         searchCancelBtn = (Button) getActivity().findViewById(R.id.btn_search_cancel);
         mSearchResultList = (ListView) getActivity().findViewById(R.id.lv_search_result);
 
-        final LinearLayout animSearchViewFrame = (LinearLayout) getActivity().findViewById(R.id.anim_search_view_frame);
+        //搜索界面展开的辅助动画View，包括独立的搜索框，搜索图标，搜索文字标签
+        animSearchViewFrame = (LinearLayout) getActivity().findViewById(R.id.anim_search_view_frame);
+        animSearchTextView = (TextView) getActivity().findViewById(R.id.anim_tv_search);
+        animSearchImageView = (ImageView) getActivity().findViewById(R.id.anim_iv_search);
 
-        final TextView animSearchTextView = (TextView) getActivity().findViewById(R.id.anim_tv_search);
-        final ImageView animSearchImageView = (ImageView) getActivity().findViewById(R.id.anim_iv_search);
+        final float displayWidth = DensityUtil.getDisplayMeasure(getActivity()).width;
+        BigDecimal b = new BigDecimal(displayWidth);
+        float displayWidthInFloat = b.setScale(2, BigDecimal.ROUND_HALF_UP).floatValue();
+        final float searchViewScale = 1.00f - DensityUtil.dip2px(getActivity(), 50) / displayWidthInFloat;
+        Log.i("SearchViewScale", searchViewScale + "");
 
-        final RelativeLayout cancelBtnRL = (RelativeLayout) getActivity().findViewById(R.id.rl_search_cancel);
-        mFilterEditText = (ClearEditText) getActivity().findViewById(R.id.filter_edit);
-
-        final FrameLayout frameContactView = (FrameLayout) layout.findViewById(R.id.fragment_layout);
-        mContactList = (ListView) layout.findViewById(R.id.lv_contact_list_view);
-
-        LayoutInflater inflater = LayoutInflater.from(getActivity());
-        final View searchViewInContactList = (View) inflater.inflate(R.layout.search_view, null);
-        searchViewInContactList.setOnClickListener(new View.OnClickListener() {
+        SearchViewTrigger.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                frameContactView.setVisibility(View.GONE);
+                UIMode = CONTACT_LIST_MODE;
                 searchArea.setVisibility(View.VISIBLE);
                 bottomTabBar.setVisibility(View.GONE);
 
-                Animation transTitle = new TranslateAnimation(0, 0, 0, -DensityUtil.dip2px(getActivity(), 35.0f));
-                transTitle.setDuration(300);
-                transTitle.setAnimationListener(new Animation.AnimationListener() {
-                    @Override
-                    public void onAnimationStart(Animation animation) {
+                titleBar.startAnimation(CreateTitleBarTransAnimation(-getResources().getDimension(R.dimen.ui_title_bar_height), getResources().getColor(R.color.grey_deep)));
+                searchArea.startAnimation(CreateTitleBarTransAnimation(-getResources().getDimension(R.dimen.ui_title_bar_height), 0));
 
-                    }
+                animSearchViewFrame.startAnimation(CreateScaleAnimation(searchViewScale));
 
-                    @Override
-                    public void onAnimationEnd(Animation animation) {
-                        titleBar.setVisibility(View.GONE);
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                            setStatusBarColor(getResources().getColor(R.color.grey_deep));
-                        }
-
-                    }
-
-                    @Override
-                    public void onAnimationRepeat(Animation animation) {
-
-                    }
-                });
-
-
-                titleBar.startAnimation(transTitle);
-                searchArea.startAnimation(transTitle);
-
-                ScaleAnimation _scaleAnimation = new ScaleAnimation(1.0f, 0.85f, 1.0f, 1.0f, Animation.RELATIVE_TO_PARENT, 0f, Animation.RELATIVE_TO_SELF, 0f);
-                _scaleAnimation.setDuration(300);
-                _scaleAnimation.setZAdjustment(Animation.ZORDER_TOP);
-//                _scaleAnimation.setRepeatCount(1);
-//                _scaleAnimation.setRepeatMode(Animation.REVERSE);//必须设置setRepeatCount此设置才生效，动画执行完成之后按照逆方式动画返回
-                animSearchViewFrame.startAnimation(_scaleAnimation);
-                _scaleAnimation.setAnimationListener(new Animation.AnimationListener() {
-                    @Override
-                    public void onAnimationStart(Animation animation) {
-
-                    }
-
-                    @Override
-                    public void onAnimationEnd(Animation animation) {
-                        animSearchViewFrame.setVisibility(View.GONE);
-                        mFilterEditText.setVisibility(View.VISIBLE);
-                        cancelBtnRL.setVisibility(View.VISIBLE);
-                    }
-
-                    @Override
-                    public void onAnimationRepeat(Animation animation) {
-
-                    }
-                });
-
-                int width = DensityUtil.getDisplayMeasure(getActivity()).width;
-
-                int w = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
-                int h = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
-
-                animSearchImageView.measure(w, h);
-                animSearchTextView.measure(w, h);
-                int viewWidth = animSearchImageView.getMeasuredHeight()
-                        +animSearchTextView.getMeasuredWidth()
-                        +DensityUtil.dip2px(getActivity(),5.0f);
-
-
-                Animation transView = new TranslateAnimation(0, - ((width - viewWidth )/2 - DensityUtil.dip2px(getActivity(),16.0f)), 0, 0);
-                transView.setDuration(300);
-
-
-                Log.i("animSearchImageView",viewWidth+"");
-
-                animSearchImageView.startAnimation(transView);
-                animSearchTextView.startAnimation(transView);
-
-
-                transView.setAnimationListener(new Animation.AnimationListener() {
-                    @Override
-                    public void onAnimationStart(Animation animation) {
-
-                    }
-
-                    @Override
-                    public void onAnimationEnd(Animation animation) {
-                        animSearchImageView.setVisibility(View.GONE);
-                        animSearchTextView.setVisibility(View.GONE);
-                    }
-
-                    @Override
-                    public void onAnimationRepeat(Animation animation) {
-
-                    }
-                });
-
-
-
-//                Animation trans = new TranslateAnimation(0,0,0,-20);
-//                trans.setDuration(3000);
-//                searchView.setAnimation(trans);
-//                trans.startNow();
-
+                animSearchImageView.startAnimation(CreateIconTransAnimation(displayWidth));
+                animSearchTextView.startAnimation(CreateIconTransAnimation(displayWidth));
 
             }
         });
@@ -217,16 +250,42 @@ public class ContactFragment extends Fragment {
         searchCancelBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.i("btncancel","click");
+                UIMode = SEARCH_VIEW_MODE;
                 titleBar.setVisibility(View.VISIBLE);
                 bottomTabBar.setVisibility(View.VISIBLE);
                 searchArea.setVisibility(View.GONE);
-                frameContactView.setVisibility(View.VISIBLE);
+
+                animSearchViewFrame.setVisibility(View.VISIBLE);
+                mFilterEditText.setVisibility(View.GONE);
+                cancelBtnLayout.setVisibility(View.GONE);
+
+                animSearchImageView.setVisibility(View.VISIBLE);
+                animSearchTextView.setVisibility(View.VISIBLE);
+
+//                titleBar.startAnimation(CreateTitleBarTransAnimation(getResources().getDimension(R.dimen.ui_title_bar_height), getResources().getColor(R.color.ui_green)));
+//                searchArea.startAnimation(CreateTitleBarTransAnimation(getResources().getDimension(R.dimen.ui_title_bar_height), 0));
+//
+//                animSearchViewFrame.startAnimation(CreateScaleAnimation(searchViewScale));
+//
+//                animSearchImageView.startAnimation(CreateIconTransAnimation(displayWidth));
+//                animSearchTextView.startAnimation(CreateIconTransAnimation(displayWidth));
+
+
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     setStatusBarColor(getResources().getColor(R.color.ui_green));
                 }
+
             }
         });
+    }
 
+    private void setContactListHeader() {
+        LayoutInflater inflater = LayoutInflater.from(getActivity());
+        //Search View
+        View searchViewInContactList = inflater.inflate(R.layout.search_view, null);
+        setSearchView(searchViewInContactList);
+        //new friend view
         View newFriendView = (View) inflater.inflate(R.layout.item_contact, null);
         newFriendView.setBackgroundColor(getResources().getColor(R.color.ui_white));
         TextView newFriendTextView = (TextView) newFriendView.findViewById(R.id.tv_contact_name);
@@ -237,20 +296,37 @@ public class ContactFragment extends Fragment {
         ViewStub vsDividerLeft = (ViewStub) newFriendView.findViewById(R.id.viewstub_divider);
         vsDividerLeft.setLayoutResource(R.layout.divider_margin_left);
         vsDividerLeft.inflate();
-
+        //add friend view
         View addFriendView = (View) inflater.inflate(R.layout.item_contact, null);
         addFriendView.setBackgroundColor(getResources().getColor(R.color.ui_white));
         TextView addFriendTextView = (TextView) addFriendView.findViewById(R.id.tv_contact_name);
         addFriendTextView.setText("添加朋友");
         ImageView addFriendImageView = (ImageView) addFriendView.findViewById(R.id.iv_contact_avatar);
         addFriendImageView.setImageResource(R.mipmap.ic_add_friends);
+        //动态加载view，viewstub要使用inflate必须已经设置了layout
         ViewStub vsDividerFull = (ViewStub) addFriendView.findViewById(R.id.viewstub_divider);
         vsDividerFull.setLayoutResource(R.layout.divider_full);
         vsDividerFull.inflate();
-
+        //给联系人列表增加固定头
         mContactList.addHeaderView(searchViewInContactList);
         mContactList.addHeaderView(newFriendView);
         mContactList.addHeaderView(addFriendView);
+    }
+
+    public void setContactListFooter() {
+        LayoutInflater inflater = LayoutInflater.from(getActivity());
+        //listview底部设置
+        mFooterView = (TextView) inflater.inflate(R.layout.item_tv_footer, null);
+        String ContactSizeString = mContactAdapter.getContactSize() + "位联系人";
+        mFooterView.setText(ContactSizeString);
+        mContactList.addFooterView(mFooterView);
+    }
+
+    public void initViews(View layout) {
+        frameContactView = (FrameLayout) layout.findViewById(R.id.fragment_layout);
+        mContactList = (ListView) layout.findViewById(R.id.lv_contact_list_view);
+
+        setContactListHeader();
 
         mContactAdapter = new ContactAdapter(getActivity());
 
@@ -259,14 +335,12 @@ public class ContactFragment extends Fragment {
         for (int i = 0; i < mContactAdapter.getSectionSize(); i++) {
             index[i] = tmp[i].letter;
         }
-
-
         mIndexBar = new IndexBar(getActivity(), index);
-        FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(50, 30 * index.length);
+        FrameLayout.LayoutParams layoutParams
+                = new FrameLayout.LayoutParams(DensityUtil.dip2px(getActivity(), 30), DensityUtil.dip2px(getActivity(), 20) * index.length);
         layoutParams.gravity = Gravity.CENTER | Gravity.END;
         mIndexBar.setLayoutParams(layoutParams);
         frameContactView.addView(mIndexBar);
-
         // 设置右侧触摸监听
         mIndexBar.setOnTouchingLetterChangedListener(new IndexBar.OnTouchingLetterChangedListener() {
 
@@ -275,20 +349,14 @@ public class ContactFragment extends Fragment {
                 // 该字母首次出现的位置
                 int position = mContactAdapter.getPositionForSection(index);
                 if (position != -1) {
-                    mContactList.setSelection(position);
+                    mContactList.setSelection(position + mContactList.getHeaderViewsCount());
                 }
-
             }
         });
 
-        //listview底部设置
-        mFooterView = (TextView) inflater.inflate(R.layout.item_tv_footer, null);
-        String ContactSizeString = mContactAdapter.getContactSize() + "位联系人";
-        mFooterView.setText(ContactSizeString);
-        mContactList.addFooterView(mFooterView);
-
         mContactList.setAdapter(mContactAdapter);
 
+        setContactListFooter();
 
 //        mFilterEditText.setShakeAnimation();
         // 根据输入框输入值的改变来过滤搜索

@@ -3,6 +3,7 @@ package com.cfryan.beyondchat.util;
 import android.app.Activity;
 import android.content.Context;
 import android.util.DisplayMetrics;
+import android.view.View;
 
 /**
  * Created by cf on 2016/1/22.
@@ -43,6 +44,31 @@ public class DensityUtil {
             return width;
         }
         public int getHeight()
+        {
+            return height;
+        }
+    }
+
+    public static ViewMeasure getViewMeasure(View view)
+    {
+        ViewMeasure vm = new ViewMeasure();
+        int w = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
+        int h = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
+        view.measure(w, h);
+        vm.height = view.getMeasuredHeight();
+        vm.width = view.getMeasuredWidth();
+        return vm;
+    }
+
+    public static class ViewMeasure
+    {
+        public int width;
+        public int height;
+        public int getMeasureWidth()
+        {
+            return width;
+        }
+        public int getMeasureHeight()
         {
             return height;
         }

@@ -79,14 +79,14 @@ public class ContactAdapter extends BaseAdapter implements SectionIndexer, Pinne
         generateData(mContactList);
     }
 
-    private void generateData(List<ContactModel> conatclist) {
+    private void generateData(List<ContactModel> contactList) {
         mItems.clear();
         //section的数量不会超过27,即26个字母+#
         prepareSections(27);
         String sectionLetter = "";
         int sectionPosition = 0, listPosition = 0;
-        for (int i = 0; i < conatclist.size(); i++) {
-            String currentLetter = conatclist.get(i).getSortLetters();
+        for (int i = 0; i < contactList.size(); i++) {
+            String currentLetter = contactList.get(i).getSortLetters();
             if (!currentLetter.equals(sectionLetter)) {
                 ContactItem section = new ContactItem(ContactItem.SECTION, currentLetter);
                 section.sectionPosition = sectionPosition;
@@ -97,7 +97,7 @@ public class ContactAdapter extends BaseAdapter implements SectionIndexer, Pinne
                 sectionPosition++;
             }
             ContactItem item = new ContactItem(ContactItem.ITEM, currentLetter);
-            item.model = conatclist.get(i);
+            item.model = contactList.get(i);
             item.sectionPosition = sectionPosition;
             item.listPosition = listPosition++;
             mItems.add(item);
@@ -147,14 +147,14 @@ public class ContactAdapter extends BaseAdapter implements SectionIndexer, Pinne
     }
 
 
-    private List<ContactModel> queryData(String groupname) {
+    private List<ContactModel> queryData(String groupName) {
         if (mContactList == null) {
             mContactList = new ArrayList<>();
         } else {
             mContactList.clear();
         }
 
-        List<RosterModel> rosters = mContactSortModel.getRosters(groupname);
+        List<RosterModel> rosters = mContactSortModel.getRosters(groupName);
 
         for (int i = 0; i < rosters.size(); i++) {
             ContactModel sortModel = new ContactModel();
@@ -179,14 +179,14 @@ public class ContactAdapter extends BaseAdapter implements SectionIndexer, Pinne
      *
      * @param filterStr
      */
-    private List<ContactModel> filterData(String filterStr, List<ContactModel> contactlist) {
+    private List<ContactModel> filterData(String filterStr, List<ContactModel> contactList) {
         List<ContactModel> filterContactList = new ArrayList<>();
         if (TextUtils.isEmpty(filterStr)) {
-            filterContactList = contactlist;
+            filterContactList = contactList;
         } else {
             filterContactList.clear();
             L.i(filterStr);
-            for (ContactModel sortModel : contactlist) {
+            for (ContactModel sortModel : contactList) {
                 String alias = sortModel.getRoster().getAlias();
                 L.i(alias);
                 if (alias.contains(filterStr) || mCharacterParser.getSelling(alias).startsWith(filterStr)) {
@@ -235,10 +235,10 @@ public class ContactAdapter extends BaseAdapter implements SectionIndexer, Pinne
             viewHolder.tvImage.setImageResource(R.mipmap.default_mobile_avatar);
             viewHolder.vsDivider.setVisibility(View.GONE);
             if (getCount() - 1 == position || getItem(position + 1).type == ContactItem.SECTION) {
-                L.i(getItem(position).model.getRoster().getAlias()+"    divider","full");
+//                L.i(getItem(position).model.getRoster().getAlias()+"    divider","full");
                 viewHolder.vsDivider.setLayoutResource(R.layout.divider_full);
             } else {
-                L.i(getItem(position).model.getRoster().getAlias() + "    divider", "left");
+//                L.i(getItem(position).model.getRoster().getAlias() + "    divider", "left");
                 viewHolder.vsDivider.setLayoutResource(R.layout.divider_margin_left);
             }
             //这里涉及到viewholder复用，因为viewstub不能重复inflate，所以这里只能使用setVisible
