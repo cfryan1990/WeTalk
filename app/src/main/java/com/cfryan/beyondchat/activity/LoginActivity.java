@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
@@ -33,7 +34,7 @@ import com.cfryan.beyondchat.util.T;
 //import com.cfryan.wanglai4android.util.PreferenceUtils;
 //import com.cfryan.wanglai4android.util.XMPPHelper;
 
-public class LoginActivity extends Activity implements IConnectionStatusCallback
+public class LoginActivity extends Activity implements IConnectionStatusCallback, View.OnClickListener
 //        ,TextWatcher,OnClickListener
 {
     public static final String LOGIN_ACTION = "com.cfryan.action.LOGIN";
@@ -113,7 +114,7 @@ public class LoginActivity extends Activity implements IConnectionStatusCallback
         mLoginOutTimeProcess = new ConnectionOutTimeProcess();
         mHandler = new myHandler(this, mLoginOutTimeProcess, mLoginDialog);
 
-//        mRegisterBtn.setOnClickListener(this);
+        mRegisterBtn.setOnClickListener(this);
     }
 
     public void onLoginClick(View v) {
@@ -364,15 +365,16 @@ public class LoginActivity extends Activity implements IConnectionStatusCallback
         }
     }
 
-//    @Override
-//    public void onClick(View v) {
-//        switch (v.getId()) {
-//            case R.id.btn_register:
-////			Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
-////			startActivity(intent);
-//                break;
-//
-//        }
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.btn_register:
+                Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
+                startActivity(intent);
+                break;
+
+        }
+    }
 
 }
 

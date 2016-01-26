@@ -3,6 +3,8 @@ package com.cfryan.beyondchat.fragment;
 import android.annotation.TargetApi;
 import android.app.Fragment;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
@@ -27,11 +29,14 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.cfryan.beyondchat.R;
+import com.cfryan.beyondchat.activity.ItemDetailActivity;
 import com.cfryan.beyondchat.adapter.ContactAdapter;
 import com.cfryan.beyondchat.model.ContactItem;
 import com.cfryan.beyondchat.ui.view.ClearEditText;
 import com.cfryan.beyondchat.ui.view.IndexBar;
 import com.cfryan.beyondchat.util.DensityUtil;
+import com.cfryan.beyondchat.util.PreferenceConstants;
+import com.cfryan.beyondchat.util.PreferenceUtils;
 
 import java.math.BigDecimal;
 
@@ -183,8 +188,7 @@ public class ContactFragment extends Fragment {
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                switch (UIMode)
-                {
+                switch (UIMode) {
                     case SEARCH_VIEW_MODE:
                         animSearchImageView.setVisibility(View.VISIBLE);
                         animSearchTextView.setVisibility(View.VISIBLE);
@@ -223,7 +227,7 @@ public class ContactFragment extends Fragment {
         animSearchTextView = (TextView) getActivity().findViewById(R.id.anim_tv_search);
         animSearchImageView = (ImageView) getActivity().findViewById(R.id.anim_iv_search);
 
-        final float displayWidth = DensityUtil.getDisplayMeasure(getActivity()).width;
+        final float displayWidth = PreferenceUtils.getPrefFloat(getActivity(), PreferenceConstants.DISPLAY_WIDTH, 0.00f);
         BigDecimal b = new BigDecimal(displayWidth);
         float displayWidthInFloat = b.setScale(2, BigDecimal.ROUND_HALF_UP).floatValue();
         final float searchViewScale = 1.00f - DensityUtil.dip2px(getActivity(), 50) / displayWidthInFloat;
@@ -250,7 +254,7 @@ public class ContactFragment extends Fragment {
         searchCancelBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.i("btncancel","click");
+                Log.i("btncancel", "click");
                 UIMode = SEARCH_VIEW_MODE;
                 titleBar.setVisibility(View.VISIBLE);
                 bottomTabBar.setVisibility(View.VISIBLE);
@@ -387,12 +391,11 @@ public class ContactFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
                 // 这里要利用adapter.getItem(position)来获取当前position所对应的对象
-                String alias = mContactAdapter.getItem(position).model.getRoster().getAlias();
+                String alias = mContactAdapter.getItem(position - 3).model.getRoster().getAlias();
 
                 Snackbar.make(view, alias, Snackbar.LENGTH_LONG).show();
 //                Toast.makeText(getActivity(), alias, Toast.LENGTH_SHORT).show();
-                startDetailInfoActivity((mContactAdapter
-                                .getItem(position)).model.getRoster().getJid(),
+                startDetailInfoActivity((mContactAdapter.getItem(position - 3)).model.getRoster().getJid(),
                         alias);
             }
         });
@@ -401,13 +404,13 @@ public class ContactFragment extends Fragment {
 
     private void startDetailInfoActivity(String userJid, String alias) {
 
-//		Intent detailInfoIntent = new Intent(getActivity(),
-//				DetailInfoActivity.class);
-//		Uri userNameUri = Uri.parse(userJid);
-//		detailInfoIntent.setData(userNameUri);
-//		detailInfoIntent.putExtra(DetailInfoActivity.INTENT_EXTRA_USERNAME,
-//				alias);
-//		startActivity(detailInfoIntent);
+        Intent detailInfoIntent = new Intent(getActivity(),
+                ItemDetailActivity.class);
+        Uri userNameUri = Uri.parse(userJid);
+//        detailInfoIntent.setData(userNameUri);
+//        detailInfoIntent.putExtra(ItemDetailActivity.INTENT_EXTRA_USERNAME,
+//                alias);
+        startActivity(detailInfoIntent);
     }
 
     private void startChatActivity(String userJid, String userName) {

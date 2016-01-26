@@ -38,7 +38,15 @@
             android:name=".activity.MainTabActivty"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustPan"></activity>
+            android:windowSoftInputMode="stateAlwaysHidden|adjustPan">
+
+        </activity>
+
+        <activity android:name="com.cfryan.beyondchat.activity.RegisterActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustPan">
+
+        </activity>
 
         <service android:name=".service.CoreService" />
 
@@ -61,7 +69,9 @@
         <activity
             android:name=".activity.ItemListActivity"
             android:label="@string/title_item_list"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar">
+
+        </activity>
         <activity
             android:name=".activity.ItemDetailActivity"
             android:label="@string/title_item_detail"

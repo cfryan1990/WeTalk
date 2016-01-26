@@ -24,7 +24,9 @@ public class PreferenceConstants {
 	public final static String Server_Name = "server_name";
 	public final static String AUTO_START = "auto_start";
 	public final static String SHOW_MY_HEAD= "show_my_head";
-	
+
+
+	public static final String DISPLAY_WIDTH = "display_width";
 	
 	public static final String TABLE_ROSTER = "roster";
 	public static final String TABLE_PHONE = "local_phones";

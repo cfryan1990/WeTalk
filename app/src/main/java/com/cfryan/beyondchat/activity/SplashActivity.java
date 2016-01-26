@@ -7,6 +7,7 @@ import android.os.Handler;
 import android.text.TextUtils;
 
 import com.cfryan.beyondchat.R;
+import com.cfryan.beyondchat.util.DensityUtil;
 import com.cfryan.beyondchat.util.PreferenceConstants;
 import com.cfryan.beyondchat.util.PreferenceUtils;
 
@@ -40,6 +41,9 @@ public class SplashActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
+
+        float displayWidth = DensityUtil.getDisplayMeasure(this).width;
+        PreferenceUtils.setPrefFloat(this, PreferenceConstants.DISPLAY_WIDTH, displayWidth);
 
         Handler mHandler = new Handler();
         String password = PreferenceUtils.getPrefString(this,
